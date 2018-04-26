@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2018.04.25 23:41:15.166,=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2018.04.25 23:41:22.022,=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2018.04.25 23:41:47.213,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
+    <Transaction>2018.04.25 23:41:47.213,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>2018.04.25 23:41:47.213,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.dfm=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2018.04.25 23:41:49.426,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Project1PCH1.h=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>2018.04.25 23:41:50.807,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Project1.cbproj=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
+    <Transaction>2018.04.26 04:18:40.562,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\WinCryptEx.h</Transaction>
+    <Transaction>2018.04.26 04:48:33.591,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.cpp</Transaction>
+    <Transaction>2018.04.26 04:49:10.864,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.cpp</Transaction>
+    <Transaction>2018.04.26 04:49:10.864,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.h</Transaction>
+    <Transaction>2018.04.26 05:27:12.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h</Transaction>
+    <Transaction>2018.04.26 05:27:12.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
+    <Transaction>2018.04.26 05:27:12.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.dfm</Transaction>
+    <Transaction>2018.04.26 05:27:29.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.h</Transaction>
+    <Transaction>2018.04.26 05:27:29.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.cpp</Transaction>
+    <Transaction>2018.04.26 05:27:29.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.dfm</Transaction>
+    <Transaction>2018.04.26 05:39:02.967,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
+    <Transaction>2018.04.26 05:39:29.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\myCryptoClass.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
+    <Transaction>2018.04.26 05:39:29.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\myCryptoClass.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h</Transaction>
+    <Transaction>2018.04.26 05:48:47.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.cpp=</Transaction>
+  </Transactions>
+  <ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="Project1.cpp"/>
+    <File Path="Project1PCH1.h"/>
+    <File Path="Form.cpp"/>
+    <File Path="Form.cpp"/>
+    <File Path="Form.dfm"/>
+    <File Path="Form.h"/>
+    <File Path="WinCryptEx.h"/>
+    <File Path="myCryptoClass.cpp"/>
+    <File Path="myCryptoClass.cpp"/>
+    <File Path="myCryptoClass.h"/>
+  </ProjectSortOrder>
+</BorlandProject>
