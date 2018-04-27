@@ -10,6 +10,7 @@ myCryptoClass::myCryptoClass(DWORD prov)
 	this->Prov = prov;
 	this->hProv = 0;        // Дескриптор контекста  критографического провайдера.
 	this->hKey = 0;
+	this->keyLen =0;
 }
 
 bool myCryptoClass::CreateContainer(wstring userName)
@@ -36,18 +37,6 @@ bool myCryptoClass::CreateContainer(wstring userName)
 	}
 	else OutputDebugStringW(L"A new key container has been created.\n");
 
-//	// Криптографический контекст с ключевым контейнером доступен. Получение
-//	// имени ключевого контейнера.
-//	if(!CryptGetProvParam(
-//						this->hProv,               // Дескриптор CSP
-//						PP_CONTAINER,             // Получение имени ключевого контейнера
-//						NULL,		          // Указатель на имя ключевого контейнера
-//						&dwUserNameLen,           // Длина имени
-//						0))
-//	{
-//	// Ошибка получении имени ключевого контейнера
-//		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-//	}
 }
 bool myCryptoClass::LoadContainer(wstring userName)
 {
@@ -82,18 +71,117 @@ bool myCryptoClass::DeleteContainer(wstring userName)
 							CRYPT_DELETEKEYSET))         // Значения флагов
 	{
 		wstringstream deb;
-		deb << "Container %s is deleted !\n" << UserName;
+		deb << "Container" << UserName << " is deleted !\n" ;
 		OutputDebugStringW(deb.str().c_str());
 	}
 	else OutputDebugStringA(this->ErrorIdToStr(GetLastError()).c_str());
 }
+
+bool myCryptoClass::CreateExchangeKey()
+{
+
+		// попытка получения дескриптора ключа обмена
+	if(CryptGetUserKey(
+						hProv,                     // Дескриптор CSP
+						AT_SIGNATURE,                   // Спецификация ключа
+						&ExchKey))                         // Дескриптор ключа
+	{
+		OutputDebugStringA("A exchange key is already available.\n");
+		return false;
+	}
+
+	// генерирование ключа
+
+	if(!CryptGenKey(
+					hProv,
+					AT_KEYEXCHANGE,
+					0,
+					&ExchKey))
+	{
+		OutputDebugStringA("Error occurred creating a exchange key.\n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+	else OutputDebugStringA("Created a exchange key.\n");
+
+	//следует запросить длину созданного ключа
+	CryptGetKeyParam(ExchKey, KP_KEYLEN, 0, &keyLen, 0);
+	wstringstream deb;
+	deb << "Key lenght - " << int(keyLen);
+	OutputDebugStringW(deb.str().c_str());
+
+	CryptGetKeyParam(ExchKey, KP_ALGID, 0, &keyLen, 0) ;
+	stringstream deb2;
+	deb2 << "Key algorithm - " << this->AlgIDToStr(keyLen);
+	OutputDebugStringA(deb2.str().c_str());
+
+}
+
+bool myCryptoClass::ExportExchangeKey(wstring filename)
+{
+	DWORD bufflen = 0;
+	CryptExportKey(ExchKey, 0, PUBLICKEYBLOB, 0, 0, &bufflen);
+	vector<BYTE> buffer(bufflen);
+
+	CryptExportKey(ExchKey, 0, PUBLICKEYBLOB, 0, &buffer[0], &bufflen);
+
+	ofstream outfile(filename.c_str(), ios::out | ios::binary);
+	outfile.write(&buffer[0], buffer.size());
+	outfile.close();
+}
+
+bool myCryptoClass::EncryptFile(wstring password, wstring filepath)
+{
+	HCRYPTHASH hash;
+	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
+	CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
+	//хэширование парольной фразы
+	CryptHashData(hash, (BYTE*)password.data(), password.size()*2, 0);
+
+	//сессионный ключ с возможностью его экспорта
+	HCRYPTKEY SessionKey;
+	CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey);
+	CryptDestroyHash(hash);
+
+	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
+	BYTE* buffer = new BYTE(512);
+	//получение адреса и длинны инит вектора
+	CryptGetKeyParam(SessionKey, KP_IV, buffer, &keyLen, 0);
+	//заполнение буфера рендомом
+	CryptGenRandom(hProv, keyLen, buffer);
+
+	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
+	CryptSetKeyParam(SessionKey, KP_IV, buffer, 0);
+
+	//блочное считывание данных из нешифрованного файла
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //Для работы с контейнером должна быть создана функция получения имени текущего пользователя
 string __fastcall myCryptoClass::GetUserName()
 {
   stringstream result;
-  char Buffer[ MAX_PATH - 0 + 1 ];
+  char Buffer[ MAX_PATH + 1 ];
   DWORD sz = 0;
   sz = MAX_PATH - 1;
   if ( GetUserNameA( Buffer, &sz ) )
@@ -327,10 +415,10 @@ string __fastcall myCryptoClass::AlgIDToStr( DWORD alg_type )
     break;
 //	case CALG_G28147_IMIT:
 //	  result = "GOST 28147-89 imitodefense algo-rithm";
-//    break;
+//	break;
 //	case CALG_GR3410:
 //	  result = "GOST R34.10 algorithm";
-//    break;
+//	break;
     case CALG_GR3410EL:
 	  result = "GOST R34.10 EL algorithm";
     break;
@@ -342,7 +430,7 @@ string __fastcall myCryptoClass::AlgIDToStr( DWORD alg_type )
 //    break;
 //	case CALG_DH_EX_EPHEM:
 //	  result = "Diffie-Hellman EPHEM key exchange algorithm";
-//    break;
+//	break;
 	case CALG_PRO_AGREEDKEY_DH:
 	  result = "PRO AGREEDKEY Diffie-Hellman algorithm";
 	break;

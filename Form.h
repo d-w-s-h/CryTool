@@ -39,12 +39,14 @@ __published:	// IDE-managed Components
 	TButton *DeleteContainerButton;
 	TMemo *Memo1;
 	TOpenDialog *OpenDialog1;
-	TSaveDialog *SaveDialog1;
+	TSaveDialog *SaveExKeyDialog;
 	TEdit *UsernameEdit;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+	void __fastcall GenerateKeyButtonClick(TObject *Sender);
+	void __fastcall ExportKeyButtonClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

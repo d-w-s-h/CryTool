@@ -29,6 +29,7 @@ object MainForm: TMainForm
     Height = 25
     Caption = #1043#1077#1085#1077#1088#1080#1088#1086#1074#1072#1090#1100
     TabOrder = 1
+    OnClick = GenerateKeyButtonClick
   end
   object ExportKeyButton: TButton
     Left = 89
@@ -37,6 +38,7 @@ object MainForm: TMainForm
     Height = 25
     Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100
     TabOrder = 2
+    OnClick = ExportKeyButtonClick
   end
   object Edit1: TEdit
     Left = 186
@@ -123,11 +125,11 @@ object MainForm: TMainForm
     Text = 'UsernameEdit'
   end
   object OpenDialog1: TOpenDialog
-    Left = 328
+    Left = 320
     Top = 104
   end
-  object SaveDialog1: TSaveDialog
-    Left = 368
+  object SaveExKeyDialog: TSaveDialog
+    Left = 392
     Top = 104
   end
 end

@@ -15,6 +15,11 @@
 #include "WinCryptEx.h"
 #   include <iostream>
 #include <sstream>
+#include <fstream>
+
+
+
+#include <vector>
 using namespace std;
 //---------------------------------------------------------------------------
 
@@ -25,6 +30,11 @@ class myCryptoClass
 		HCRYPTKEY hKey;          // Дескриптор открытого/закрытого ключа.
 		DWORD Prov;
 
+		HCRYPTKEY ExchKey ; //      ключ контейнера, предназначенный для обмена сессионными ключами
+		DWORD keyLen;  //длина ключа обмена
+//		DWORD flag;
+
+
 	public:
 		myCryptoClass(DWORD prov);
 		void CleanUp();
@@ -34,6 +44,11 @@ class myCryptoClass
 		bool CreateContainer(wstring userName);
 		bool LoadContainer(wstring userName);
 		bool DeleteContainer(wstring userName);
+
+		bool CreateExchangeKey();
+		bool LoadExchangeKey();
+		bool ExportExchangeKey(wstring filename);
+		bool EncryptFile(wstring password, wstring filepath);
 };
 
 #endif
