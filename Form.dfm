@@ -1,9 +1,9 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
-  Caption = 'MainForm'
-  ClientHeight = 166
-  ClientWidth = 635
+  Caption = 'CryTool'
+  ClientHeight = 192
+  ClientWidth = 504
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,122 +14,128 @@ object MainForm: TMainForm
   OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 35
+    Width = 55
+    Height = 13
+    Caption = #1050#1086#1085#1090#1077#1081#1085#1077#1088
+  end
+  object Label2: TLabel
+    Left = 105
+    Top = 35
+    Width = 67
+    Height = 13
+    Caption = #1050#1083#1102#1095' '#1086#1073#1084#1077#1085#1072
+  end
   object LoadKeyButton: TButton
-    Left = 89
-    Top = 32
+    Left = 105
+    Top = 53
     Width = 91
-    Height = 25
+    Height = 41
     Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
     TabOrder = 0
   end
   object GenerateKeyButton: TButton
-    Left = 89
-    Top = 63
+    Left = 105
+    Top = 95
     Width = 91
-    Height = 25
+    Height = 42
     Caption = #1043#1077#1085#1077#1088#1080#1088#1086#1074#1072#1090#1100
     TabOrder = 1
     OnClick = GenerateKeyButtonClick
   end
   object ExportKeyButton: TButton
-    Left = 89
-    Top = 94
+    Left = 105
+    Top = 138
     Width = 91
-    Height = 25
+    Height = 33
     Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100
     TabOrder = 2
     OnClick = ExportKeyButtonClick
   end
-  object Edit1: TEdit
-    Left = 186
-    Top = 77
+  object EnPasswordEdit: TEdit
+    Left = 226
+    Top = 123
     Width = 121
     Height = 21
     TabOrder = 3
-    Text = 'Edit1'
+    Text = '111'
   end
-  object Edit2: TEdit
-    Left = 186
-    Top = 104
+  object PassConfirmEdit: TEdit
+    Left = 226
+    Top = 150
     Width = 121
     Height = 21
     TabOrder = 4
-    Text = 'Edit2'
+    Text = '111'
   end
-  object Edit3: TEdit
-    Left = 313
-    Top = 77
+  object DePasswordEdit: TEdit
+    Left = 353
+    Top = 123
     Width = 121
     Height = 21
     TabOrder = 5
-    Text = 'Edit3'
+    Text = 'DePasswordEdit'
   end
   object EncryptFileButton: TButton
-    Left = 186
-    Top = 32
+    Left = 226
+    Top = 31
     Width = 121
-    Height = 41
+    Height = 86
     Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
     TabOrder = 6
+    OnClick = EncryptFileButtonClick
   end
   object DecryptFileButton: TButton
-    Left = 313
-    Top = 32
+    Left = 353
+    Top = 31
     Width = 121
-    Height = 39
+    Height = 86
     Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
     TabOrder = 7
   end
   object CreateContainerButton: TButton
     Left = 8
-    Top = 32
-    Width = 75
-    Height = 25
+    Top = 53
+    Width = 91
+    Height = 41
     Caption = #1057#1086#1079#1076#1072#1090#1100
     TabOrder = 8
     OnClick = CreateContainerButtonClick
   end
   object LoadContainerButton: TButton
     Left = 8
-    Top = 63
-    Width = 75
-    Height = 25
+    Top = 95
+    Width = 91
+    Height = 42
     Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
     TabOrder = 9
     OnClick = LoadContainerButtonClick
   end
   object DeleteContainerButton: TButton
     Left = 8
-    Top = 94
-    Width = 75
-    Height = 25
+    Top = 138
+    Width = 91
+    Height = 33
     Caption = #1059#1076#1072#1083#1080#1090#1100
     TabOrder = 10
     OnClick = DeleteContainerButtonClick
-  end
-  object Memo1: TMemo
-    Left = 440
-    Top = 32
-    Width = 187
-    Height = 93
-    Lines.Strings = (
-      'Memo1')
-    TabOrder = 11
   end
   object UsernameEdit: TEdit
     Left = 8
     Top = 8
     Width = 121
     Height = 21
-    TabOrder = 12
+    TabOrder = 11
     Text = 'UsernameEdit'
   end
-  object OpenDialog1: TOpenDialog
-    Left = 320
-    Top = 104
+  object OpenFileDialog: TOpenDialog
+    Left = 360
+    Top = 150
   end
   object SaveExKeyDialog: TSaveDialog
-    Left = 392
-    Top = 104
+    Left = 432
+    Top = 150
   end
 end

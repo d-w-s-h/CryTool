@@ -3,6 +3,7 @@
 #pragma hdrstop
 
 #include "myCryptoClass.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 myCryptoClass::myCryptoClass(DWORD prov)
@@ -83,7 +84,7 @@ bool myCryptoClass::CreateExchangeKey()
 		// попытка получения дескриптора ключа обмена
 	if(CryptGetUserKey(
 						hProv,                     // Дескриптор CSP
-						AT_SIGNATURE,                   // Спецификация ключа
+						AT_KEYEXCHANGE,                   // Спецификация ключа
 						&ExchKey))                         // Дескриптор ключа
 	{
 		OutputDebugStringA("A exchange key is already available.\n");
@@ -105,14 +106,15 @@ bool myCryptoClass::CreateExchangeKey()
 	else OutputDebugStringA("Created a exchange key.\n");
 
 	//следует запросить длину созданного ключа
-	CryptGetKeyParam(ExchKey, KP_KEYLEN, 0, &keyLen, 0);
+	BYTE keysize;
+	CryptGetKeyParam(ExchKey, KP_KEYLEN, &keysize, 0,0);
 	wstringstream deb;
-	deb << "Key lenght - " << int(keyLen);
+	deb << "Key lenght - " << int(keysize);
 	OutputDebugStringW(deb.str().c_str());
 
-	CryptGetKeyParam(ExchKey, KP_ALGID, 0, &keyLen, 0) ;
+	CryptGetKeyParam(ExchKey, KP_ALGID, &keysize, 0, 0) ;
 	stringstream deb2;
-	deb2 << "Key algorithm - " << this->AlgIDToStr(keyLen);
+	deb2 << "Key algorithm - " << this->AlgIDToStr(keysize);
 	OutputDebugStringA(deb2.str().c_str());
 
 }
@@ -130,7 +132,7 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 	outfile.close();
 }
 
-bool myCryptoClass::EncryptFile(wstring password, wstring filepath)
+bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 {
 	HCRYPTHASH hash;
 	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
@@ -144,25 +146,86 @@ bool myCryptoClass::EncryptFile(wstring password, wstring filepath)
 	CryptDestroyHash(hash);
 
 	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
-	BYTE* buffer = new BYTE(512);
+	BYTE* IV = new BYTE(keyLen);
 	//получение адреса и длинны инит вектора
-	CryptGetKeyParam(SessionKey, KP_IV, buffer, &keyLen, 0);
+
+	CryptGetKeyParam(SessionKey, KP_IV, IV , &keyLen, 0);
 	//заполнение буфера рендомом
-	CryptGenRandom(hProv, keyLen, buffer);
+	CryptGenRandom(hProv, keyLen, IV );
 
 	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
-	CryptSetKeyParam(SessionKey, KP_IV, buffer, 0);
-
-	//блочное считывание данных из нешифрованного файла
+	CryptSetKeyParam(SessionKey, KP_IV, IV , 0);
 
 
 
 
+	std::ifstream source(filepath.c_str(),ios::binary);
+	//создадим вектор результата
+	std::vector<BYTE> outFILE;
 
+	outFILE.reserve(source.tellg()+512);
+	outFILE.push_back(keyLen); //запись длины ключа в начало вектора файла с результатом шифрования
+	outFILE.push_back(*IV ); //запись инит вектора, чтобы можно было расшифровать.
 
+	DWORD BLOCK_LENGTH = 64;
+	DWORD cbContent = 0;	// Длина содержимого
+	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
+	do
+	{
+		source.read(pbContent, BLOCK_LENGTH);
 
+		BOOL bFinal = source.eof();
+		// Зашифрование прочитанного блока на сессионном ключе.
+		if(CryptEncrypt(
+						SessionKey,
+						0,
+						bFinal,
+						0,
+						pbContent,
+						&cbContent,
+						BLOCK_LENGTH))
+		{
+			OutputDebugStringA( "*************Encryption succeeded.");
+			// Запись зашифрованного блока в файл.
+			outFILE.push_back(*pbContent);
+		}
+		else OutputDebugStringA("Encryption failed.");
+	}
+	while (!source.eof());
+
+//	BYTE *buffer = new BYTE(512);
+//	do
+//	{
+//		is.read(buffer,length);
+//		is.
+//		CryptEncrypt(
+//					hSessionKey,
+//					0,
+//					bFinal,
+//					0,
+//					pbContent,
+//					&cbContent,
+//					bufLen);
+//
+//	}
+//	while (!feof(source));
+//
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

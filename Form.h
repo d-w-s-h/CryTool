@@ -29,24 +29,26 @@ __published:	// IDE-managed Components
 	TButton *LoadKeyButton;
 	TButton *GenerateKeyButton;
 	TButton *ExportKeyButton;
-	TEdit *Edit1;
-	TEdit *Edit2;
-	TEdit *Edit3;
+	TEdit *EnPasswordEdit;
+	TEdit *PassConfirmEdit;
+	TEdit *DePasswordEdit;
 	TButton *EncryptFileButton;
 	TButton *DecryptFileButton;
 	TButton *CreateContainerButton;
 	TButton *LoadContainerButton;
 	TButton *DeleteContainerButton;
-	TMemo *Memo1;
-	TOpenDialog *OpenDialog1;
+	TOpenDialog *OpenFileDialog;
 	TSaveDialog *SaveExKeyDialog;
 	TEdit *UsernameEdit;
+	TLabel *Label1;
+	TLabel *Label2;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall GenerateKeyButtonClick(TObject *Sender);
 	void __fastcall ExportKeyButtonClick(TObject *Sender);
+	void __fastcall EncryptFileButtonClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

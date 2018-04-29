@@ -17,7 +17,7 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	: TForm(Owner)
 {
 
-	CSP = new myCryptoClass(PROV_GOST_2001_DH);
+	CSP = new myCryptoClass( PROV_GOST_2001_DH);
 	MainForm->UsernameEdit->Text = (UnicodeString) CSP->GetUserName().c_str();
 	bool CreateContainer();
 }
@@ -56,6 +56,25 @@ void __fastcall TMainForm::ExportKeyButtonClick(TObject *Sender)
 	{
 		CSP->ExportExchangeKey(SaveExKeyDialog->FileName.c_str());
 	}
+
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
+{
+	if(EnPasswordEdit->Text != PassConfirmEdit->Text)
+	{
+		Application->MessageBoxW(L"Несовпадение паролей, попробуйте еще раз.",L"Ошибка", MB_OK);
+		return;
+	}
+
+	if(OpenFileDialog->Execute())
+	{
+		CSP->Encrypt_File(EnPasswordEdit->Text.c_str(),OpenFileDialog->FileName.c_str());
+	}
+
 
 
 }

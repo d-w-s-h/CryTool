@@ -12,13 +12,19 @@
 #   include <CSP_WinDef.h>
 #   include <CSP_WinCrypt.h>
 #endif
-#include "WinCryptEx.h"
+
 #   include <iostream>
+
+#include "wincsp.h"
+#include "WinCryptEx.h"
+
+
 #include <sstream>
 #include <fstream>
 
 
 
+#include <iterator>
 #include <vector>
 using namespace std;
 //---------------------------------------------------------------------------
@@ -32,6 +38,7 @@ class myCryptoClass
 
 		HCRYPTKEY ExchKey ; //      ключ контейнера, предназначенный для обмена сессионными ключами
 		DWORD keyLen;  //длина ключа обмена
+
 //		DWORD flag;
 
 
@@ -48,7 +55,9 @@ class myCryptoClass
 		bool CreateExchangeKey();
 		bool LoadExchangeKey();
 		bool ExportExchangeKey(wstring filename);
-		bool EncryptFile(wstring password, wstring filepath);
+		bool Encrypt_File(wstring password, wstring filepath);
 };
+
+
 
 #endif
