@@ -145,6 +145,103 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 	if(!CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash))
 	{
 		OutputDebugStringA("CryptCreateHash FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+	//хэширование парольной фразы
+	if(!CryptHashData(hash, (BYTE*)password.data(), password.size()*2, 0))
+	{
+		OutputDebugStringA("CryptHashData FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+	//сессионный ключ с возможностью его экспорта
+	HCRYPTKEY SessionKey = 0;
+	if(!CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey))
+	{
+		OutputDebugStringA("CryptDeriveKey FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+	CryptDestroyHash(hash);
+
+	DWORD IVsize = 64;
+	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
+	BYTE* IV = new BYTE(IVsize);
+	//получение адреса и длинны инит вектора
+
+	CryptGetKeyParam(SessionKey, KP_IV, IV , &IVsize, 0);
+	//заполнение буфера рендомом
+	CryptGenRandom(hProv, IVsize, IV );
+
+	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
+	if(!CryptSetKeyParam(SessionKey, KP_IV, IV , 0))
+	{
+		OutputDebugStringA("CryptSetKeyParam FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+	//откроем файл
+	std::ifstream source(filepath.c_str(),ios::binary);
+	//создадим рядом зашифрованный
+	wstringstream encryptpath;
+	encryptpath << filepath.c_str() <<".encrypted";
+	std::ofstream destination(encryptpath.str().c_str(), std::ios::binary);
+
+//запись длины ключа в начало вектора файла с результатом шифрования
+//запись инит вектора, чтобы можно было расшифровать.
+	destination.write((BYTE*)&IVsize,4);
+	destination.write(IV,IVsize);
+
+
+	DWORD BLOCK_LENGTH = 512;
+	DWORD cbContent;	// Длина содержимого
+//	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
+	vector<BYTE> pbContent;
+	pbContent.reserve(512);
+	do
+	{
+		source.read(&pbContent[0], BLOCK_LENGTH);
+		cbContent = pbContent.size();
+		BOOL bFinal = source.eof();
+		// Зашифрование прочитанного блока на сессионном ключе.
+		if(CryptEncrypt(
+						SessionKey,
+						0,
+						bFinal,
+						0,
+						&pbContent[0],
+						&cbContent,
+						BLOCK_LENGTH))
+		{
+			OutputDebugStringA( "*************Encryption succeeded.");
+			// Запись зашифрованного блока в файл.
+			destination.write(&pbContent[0], BLOCK_LENGTH);
+		}
+		else
+		{
+			OutputDebugStringA("Encryption failed.");OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		}
+		pbContent.clear();
+	}
+	while (!source.eof());
+	CryptDestroyKey(SessionKey);
+
+}
+
+bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
+{
+	std::ifstream source(filepath.c_str(),ios::binary);
+	DWORD IVsize=0;
+	BYTE* IV = new BYTE(IVsize);
+	source.read((BYTE*)&IVsize,4);
+	source.read(IV,IVsize);
+
+	HCRYPTHASH hash;
+	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
+	if(!CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash))
+	{
+		OutputDebugStringA("CryptCreateHash FAILED") ;
 		return false;
 	}
 	//хэширование парольной фразы
@@ -162,65 +259,45 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 	}
 	CryptDestroyHash(hash);
 
-	DWORD IVsize = 512;
-	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
-	BYTE* IV = new BYTE(IVsize);
-	//получение адреса и длинны инит вектора
-
-	CryptGetKeyParam(SessionKey, KP_IV, IV , &IVsize, 0);
-	//заполнение буфера рендомом
-	CryptGenRandom(hProv, IVsize, IV );
-
-	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
+	//Укажем, что принятый IV будет инициализирующим для расшифровывания:
 	if(!CryptSetKeyParam(SessionKey, KP_IV, IV , 0))
 	{
-		OutputDebugStringA("CryptDeriveKey FAILED") ;
+		OutputDebugStringA("CryptSetKeyParam FAILED") ;
 		return false;
 	}
 
+	wstringstream decryptpath;
+	decryptpath << filepath.c_str() <<".decrypted";
+	std::ofstream destination(decryptpath.str().c_str(), std::ios::binary);
 
-
-	//откроем файл
-	std::ifstream source(filepath.c_str(),ios::binary);
-	//создадим рядом зашифрованный
-	wstringstream encryptpath;
-	encryptpath << filepath.c_str() <<".encrypted";
-	std::ofstream destination(encryptpath.str().c_str(), std::ios::binary);
-
-//	//создадим вектор результата
-//	std::vector<BYTE> outFILE;
-
-//	outFILE.reserve(source.tellg()+512);
-//	outFILE.push_back(keyLen); //запись длины ключа в начало вектора файла с результатом шифрования
-//	outFILE.push_back(*IV ); //запись инит вектора, чтобы можно было расшифровать.
-//	destination.write(keyLen, 4);
-//	destination.write(*IV, keyLen);
-
-	DWORD BLOCK_LENGTH = 64;
-	DWORD cbContent = 0;	// Длина содержимого
-	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
+    DWORD BLOCK_LENGTH = 512;
+	DWORD cbContent;	// Длина содержимого
+//	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
+	vector<BYTE> pbContent;
+	pbContent.reserve(512);
 	do
 	{
-		source.read(pbContent, BLOCK_LENGTH);
-
+		source.read(&pbContent[0], BLOCK_LENGTH);
+		cbContent = pbContent.size();
 		BOOL bFinal = source.eof();
-		// Зашифрование прочитанного блока на сессионном ключе.
-		if(CryptEncrypt(
+		// расшифрование прочитанного блока на сессионном ключе.
+		if(CryptDecrypt(
 						SessionKey,
 						0,
 						bFinal,
 						0,
-						pbContent,
-						&cbContent,
-						BLOCK_LENGTH))
+						&pbContent[0],
+						&cbContent))
 		{
-			OutputDebugStringA( "*************Encryption succeeded.");
-			// Запись зашифрованного блока в файл.
-			destination.write(pbContent, BLOCK_LENGTH);
+			OutputDebugStringA( "*************Decryption succeeded.");
+			// Запись расшифрованного блока в файл.
+			destination.write(&pbContent[0], BLOCK_LENGTH);
 		}
 		else OutputDebugStringA("Encryption failed.");
 	}
 	while (!source.eof());
+	CryptDestroyKey(SessionKey);
+
 
 }
 

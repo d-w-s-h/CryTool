@@ -76,7 +76,7 @@ object MainForm: TMainForm
     Width = 121
     Height = 21
     TabOrder = 5
-    Text = 'DePasswordEdit'
+    Text = '111'
   end
   object EncryptFileButton: TButton
     Left = 226
@@ -94,6 +94,7 @@ object MainForm: TMainForm
     Height = 86
     Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
     TabOrder = 7
+    OnClick = DecryptFileButtonClick
   end
   object CreateContainerButton: TButton
     Left = 8

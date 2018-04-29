@@ -80,3 +80,14 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TMainForm::DecryptFileButtonClick(TObject *Sender)
+{
+	if(OpenFileDialog->Execute())
+	{
+		CSP->Decrypt_File(DePasswordEdit->Text.c_str(),OpenFileDialog->FileName.c_str());
+	}
+}
+//---------------------------------------------------------------------------
+
+

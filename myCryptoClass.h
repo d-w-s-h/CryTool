@@ -15,7 +15,7 @@
 
 #   include <iostream>
 
-#include "wincsp.h"
+
 #include "WinCryptEx.h"
 
 
@@ -56,6 +56,7 @@ class myCryptoClass
 		bool LoadExchangeKey();
 		bool ExportExchangeKey(wstring filename);
 		bool Encrypt_File(wstring password, wstring filepath);
+		bool Decrypt_File(wstring password, wstring filepath);
 };
 
 
