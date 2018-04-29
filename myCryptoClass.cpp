@@ -36,8 +36,13 @@ bool myCryptoClass::CreateContainer(wstring userName)
 							CRYPT_NEWKEYSET))
 	{
 		OutputDebugStringW(L"Could not create a new key container.\n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 	}
-	else OutputDebugStringW(L"A new key container has been created.\n");
+	else
+	{
+		OutputDebugStringW(L"A new key container has been created.\n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+	}
 
 }
 bool myCryptoClass::LoadContainer(wstring userName)
@@ -149,7 +154,7 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 		return false;
 	}
 	//хэширование парольной фразы
-	if(!CryptHashData(hash, (BYTE*)password.data(), password.size()*2, 0))
+	if(!CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0))
 	{
 		OutputDebugStringA("CryptHashData FAILED") ;
 		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
@@ -194,35 +199,34 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 	destination.write(IV,IVsize);
 
 
-	DWORD BLOCK_LENGTH = 512;
+	DWORD BLOCK_LENGTH = 1024;
 	DWORD cbContent;	// Длина содержимого
 //	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
-	vector<BYTE> pbContent;
-	pbContent.reserve(512);
+	vector<BYTE> Content;
+	Content.reserve(BLOCK_LENGTH);
 	do
 	{
-		source.read(&pbContent[0], BLOCK_LENGTH);
-		cbContent = pbContent.size();
-		BOOL bFinal = source.eof();
+		source.read(&Content[0], BLOCK_LENGTH);
+		cbContent = Content.size();
 		// Зашифрование прочитанного блока на сессионном ключе.
 		if(CryptEncrypt(
 						SessionKey,
 						0,
-						bFinal,
+						source.eof(),
 						0,
-						&pbContent[0],
+						&Content[0],
 						&cbContent,
 						BLOCK_LENGTH))
 		{
-			OutputDebugStringA( "*************Encryption succeeded.");
+			OutputDebugStringA( "*************Encryption succeeded****************.");
 			// Запись зашифрованного блока в файл.
-			destination.write(&pbContent[0], BLOCK_LENGTH);
+			destination.write(&Content[0], BLOCK_LENGTH);
 		}
 		else
 		{
 			OutputDebugStringA("Encryption failed.");OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 		}
-		pbContent.clear();
+		Content.clear();
 	}
 	while (!source.eof());
 	CryptDestroyKey(SessionKey);
@@ -242,12 +246,14 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 	if(!CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash))
 	{
 		OutputDebugStringA("CryptCreateHash FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 		return false;
 	}
 	//хэширование парольной фразы
-	if(!CryptHashData(hash, (BYTE*)password.data(), password.size()*2, 0))
+	if(!CryptHashData(hash, (BYTE*)password.c_str(), password.size()*2, 0))
 	{
 		OutputDebugStringA("CryptHashData FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 		return false;
 	}
 	//сессионный ключ с возможностью его экспорта
@@ -255,6 +261,7 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 	if(!CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey))
 	{
 		OutputDebugStringA("CryptDeriveKey FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 		return false;
 	}
 	CryptDestroyHash(hash);
@@ -263,6 +270,7 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 	if(!CryptSetKeyParam(SessionKey, KP_IV, IV , 0))
 	{
 		OutputDebugStringA("CryptSetKeyParam FAILED") ;
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 		return false;
 	}
 
@@ -270,35 +278,34 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 	decryptpath << filepath.c_str() <<".decrypted";
 	std::ofstream destination(decryptpath.str().c_str(), std::ios::binary);
 
-    DWORD BLOCK_LENGTH = 512;
+	DWORD BLOCK_LENGTH = 1024;
 	DWORD cbContent;	// Длина содержимого
 //	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
-	vector<BYTE> pbContent;
-	pbContent.reserve(512);
+	vector<BYTE> Content;
+	Content.reserve(BLOCK_LENGTH);
 	do
 	{
-		source.read(&pbContent[0], BLOCK_LENGTH);
-		cbContent = pbContent.size();
-		BOOL bFinal = source.eof();
+		source.read(&Content[0], BLOCK_LENGTH);
+		cbContent = Content.size();
+
 		// расшифрование прочитанного блока на сессионном ключе.
 		if(CryptDecrypt(
 						SessionKey,
 						0,
-						bFinal,
+						source.eof(),
 						0,
-						&pbContent[0],
+						&Content[0],
 						&cbContent))
 		{
-			OutputDebugStringA( "*************Decryption succeeded.");
+			OutputDebugStringA( "*************Decryption succeeded********************.");
 			// Запись расшифрованного блока в файл.
-			destination.write(&pbContent[0], BLOCK_LENGTH);
+			destination.write(&Content[0], BLOCK_LENGTH);
 		}
 		else OutputDebugStringA("Encryption failed.");
+		Content.clear();
 	}
 	while (!source.eof());
 	CryptDestroyKey(SessionKey);
-
-
 }
 
 
