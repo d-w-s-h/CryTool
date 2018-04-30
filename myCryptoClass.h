@@ -40,6 +40,7 @@ class myCryptoClass
 
 		HCRYPTKEY ExchKey ; //      ключ контейнера, предназначенный для обмена сессионными ключами
 		DWORD keyLen;  //длина ключа обмена
+		DWORD BLOCK_LENGTH;
 
 //		DWORD flag;
 

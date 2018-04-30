@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'CryTool'
-  ClientHeight = 192
+  ClientHeight = 181
   ClientWidth = 504
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -49,38 +49,41 @@ object MainForm: TMainForm
     Left = 105
     Top = 138
     Width = 91
-    Height = 33
+    Height = 35
     Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100
     TabOrder = 2
     OnClick = ExportKeyButtonClick
   end
   object EnPasswordEdit: TEdit
     Left = 226
-    Top = 123
+    Top = 115
     Width = 121
     Height = 21
+    PasswordChar = '*'
     TabOrder = 3
     Text = '111'
   end
   object PassConfirmEdit: TEdit
     Left = 226
-    Top = 150
+    Top = 142
     Width = 121
     Height = 21
+    PasswordChar = '*'
     TabOrder = 4
     Text = '111'
   end
   object DePasswordEdit: TEdit
     Left = 353
-    Top = 123
+    Top = 115
     Width = 121
     Height = 21
+    PasswordChar = '*'
     TabOrder = 5
     Text = '111'
   end
   object EncryptFileButton: TButton
     Left = 226
-    Top = 31
+    Top = 23
     Width = 121
     Height = 86
     Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
@@ -89,7 +92,7 @@ object MainForm: TMainForm
   end
   object DecryptFileButton: TButton
     Left = 353
-    Top = 31
+    Top = 23
     Width = 121
     Height = 86
     Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
@@ -118,7 +121,7 @@ object MainForm: TMainForm
     Left = 8
     Top = 138
     Width = 91
-    Height = 33
+    Height = 35
     Caption = #1059#1076#1072#1083#1080#1090#1100
     TabOrder = 10
     OnClick = DeleteContainerButtonClick
@@ -133,10 +136,10 @@ object MainForm: TMainForm
   end
   object OpenFileDialog: TOpenDialog
     Left = 360
-    Top = 150
+    Top = 142
   end
   object SaveExKeyDialog: TSaveDialog
     Left = 432
-    Top = 150
+    Top = 142
   end
 end

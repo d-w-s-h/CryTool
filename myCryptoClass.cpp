@@ -13,6 +13,8 @@ myCryptoClass::myCryptoClass(DWORD prov)
 	this->hKey = 0;
 	this->ExchKey = 0;
 	this->keyLen =0;
+    this->BLOCK_LENGTH =  1024;
+
 }
 
 bool myCryptoClass::CreateContainer(wstring userName)
@@ -29,11 +31,11 @@ bool myCryptoClass::CreateContainer(wstring userName)
 	//  заменяется на NULL здесь :
 	// Создание нового контейнера.
 	if(!CryptAcquireContextW(
-							&this->hProv,
-							UserName,
-							NULL,
-							this->Prov,
-							CRYPT_NEWKEYSET))
+					&this->hProv,
+					UserName,
+					NULL,
+					this->Prov,
+					CRYPT_NEWKEYSET))
 	{
 		OutputDebugStringW(L"Could not create a new key container.\n");
 		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
@@ -52,11 +54,11 @@ bool myCryptoClass::LoadContainer(wstring userName)
 	LPCWSTR UserName;	          // Добавленное по выбору имя пользователя
 	UserName = userName.c_str();
 	if(CryptAcquireContext(
-							&this->hProv,               // Дескриптор CSP
-							UserName,                  // Имя контейнера
-							NULL,                      // Использование провайдера по умолчанию
-							this->Prov,	   // Тип провайдера
-							0))                        // Значения флагов
+					&this->hProv,               // Дескриптор CSP
+					UserName,                  // Имя контейнера
+					NULL,                      // Использование провайдера по умолчанию
+					this->Prov,	   // Тип провайдера
+					0))                        // Значения флагов
 	{
 		wstringstream deb;
 		deb << "A cryptcontext with the " << UserName << " key container has been acquired.\n" ;
@@ -71,11 +73,11 @@ bool myCryptoClass::DeleteContainer(wstring userName)
 	LPCWSTR UserName;	          // Добавленное по выбору имя пользователя
 	UserName = userName.c_str();
 	if(CryptAcquireContext(
-							&this->hProv,               // Дескриптор CSP
-							UserName,                  // Имя контейнера
-							NULL,                      // Использование провайдера по умолчанию
-							this->Prov,	   // Тип провайдера
-							CRYPT_DELETEKEYSET))         // Значения флагов
+					&this->hProv,               // Дескриптор CSP
+					UserName,                  // Имя контейнера
+					NULL,                      // Использование провайдера по умолчанию
+					this->Prov,	   // Тип провайдера
+					CRYPT_DELETEKEYSET))         // Значения флагов
 	{
 		wstringstream deb;
 		deb << "Container" << UserName << " is deleted !\n" ;
@@ -89,9 +91,9 @@ bool myCryptoClass::CreateExchangeKey()
 
 		// попытка получения дескриптора ключа обмена
 	if(CryptGetUserKey(
-						hProv,                     // Дескриптор CSP
-						AT_KEYEXCHANGE,                   // Спецификация ключа
-						&ExchKey))                         // Дескриптор ключа
+					hProv,                     // Дескриптор CSP
+					AT_KEYEXCHANGE,                   // Спецификация ключа
+					&ExchKey))                         // Дескриптор ключа
 	{
 		OutputDebugStringA("A exchange key is already available.\n");
 		return false;
@@ -145,167 +147,225 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 
 bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 {
+	bool result = true;
 	HCRYPTHASH hash;
-	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
-	if(!CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash))
-	{
-		OutputDebugStringA("CryptCreateHash FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
-	//хэширование парольной фразы
-	if(!CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0))
-	{
-		OutputDebugStringA("CryptHashData FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
-	//сессионный ключ с возможностью его экспорта
 	HCRYPTKEY SessionKey = 0;
-	if(!CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey))
-	{
-		OutputDebugStringA("CryptDeriveKey FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
+	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
+	result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
+	//хэширование парольной фразы
+	result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0);
+	//сессионный ключ с возможностью его экспорта
+	result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey);
 	CryptDestroyHash(hash);
 
-	DWORD IVsize = 64;
+	DWORD IVsize = 0;
+	CryptGetKeyParam(SessionKey, KP_IV, 0, &IVsize, 0);
 	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
 	BYTE* IV = new BYTE(IVsize);
 	//получение адреса и длинны инит вектора
-
 	CryptGetKeyParam(SessionKey, KP_IV, IV , &IVsize, 0);
 	//заполнение буфера рендомом
 	CryptGenRandom(hProv, IVsize, IV );
 
 	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
-	if(!CryptSetKeyParam(SessionKey, KP_IV, IV , 0))
-	{
-		OutputDebugStringA("CryptSetKeyParam FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
-	//откроем файл
-	std::ifstream source(filepath.c_str(),ios::binary);
-	//создадим рядом зашифрованный
+	result &= CryptSetKeyParam(SessionKey, KP_IV, IV , 0);
+
+	//откроем файлы
+	HANDLE hSource = CreateFileW(
+					filepath.c_str(),
+					GENERIC_READ,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					OPEN_EXISTING,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hSource == INVALID_HANDLE_VALUE) return false;
+
 	wstringstream encryptpath;
 	encryptpath << filepath.c_str() <<".encrypted";
-	std::ofstream destination(encryptpath.str().c_str(), std::ios::binary);
 
-//запись длины ключа в начало вектора файла с результатом шифрования
-//запись инит вектора, чтобы можно было расшифровать.
-	destination.write((BYTE*)&IVsize,4);
-	destination.write(IV,IVsize);
+	HANDLE hDestination = CreateFileW(
+					encryptpath.str().c_str(),
+					GENERIC_WRITE,
+					0,
+					NULL,
+					CREATE_ALWAYS,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hDestination == INVALID_HANDLE_VALUE) return false;
 
+	LARGE_INTEGER offset;
+	offset.QuadPart = 0;
+	bool eof = false;
+	DWORD nWrote = 0;
+	vector<BYTE> content;
+	content.reserve(BLOCK_LENGTH);
 
-	DWORD BLOCK_LENGTH = 1024;
-	DWORD cbContent;	// Длина содержимого
-//	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
-	vector<BYTE> Content;
-	Content.reserve(BLOCK_LENGTH);
+	result &= WriteFile(         // записываем IV
+					hDestination,
+					IV,
+					IVsize,
+					&nWrote,
+					NULL);
+	DWORD sourceSize= GetFileSize(hSource, NULL);
+	stringstream debug;
+
 	do
 	{
-		source.read(&Content[0], BLOCK_LENGTH);
-		cbContent = Content.size();
-		// Зашифрование прочитанного блока на сессионном ключе.
-		if(CryptEncrypt(
-						SessionKey,
-						0,
-						source.eof(),
-						0,
-						&Content[0],
-						&cbContent,
-						BLOCK_LENGTH))
-		{
-			OutputDebugStringA( "*************Encryption succeeded****************.");
-			// Запись зашифрованного блока в файл.
-			destination.write(&Content[0], BLOCK_LENGTH);
-		}
-		else
-		{
-			OutputDebugStringA("Encryption failed.");OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		}
-		Content.clear();
-	}
-	while (!source.eof());
-	CryptDestroyKey(SessionKey);
+		DWORD newPosition = SetFilePointer(
+					hSource,
+					offset.LowPart,
+					&offset.HighPart,
+					FILE_BEGIN);
+		result &= (newPosition == offset.QuadPart);
 
+		DWORD nRead = 0;
+		result &= ReadFile(
+					hSource,
+					&content[0],
+					BLOCK_LENGTH,
+					&nRead,
+					NULL);
+
+		if (!result)
+		{
+			return false;
+		}
+
+		eof = (nRead < BLOCK_LENGTH);
+
+		result &= CryptEncrypt(
+					SessionKey,
+					0,
+					eof,
+					0,
+					&content[0],
+					&nRead,
+					BLOCK_LENGTH);
+
+		result &= WriteFile(
+					hDestination,
+					&content[0],
+					nRead,
+					&nWrote,
+					NULL);
+		offset.QuadPart += nRead;
+
+		debug << "encrypted: " <<  offset.QuadPart << " of " << sourceSize;
+		OutputDebugStringA(debug.str().c_str());
+		debug.str("");
+
+	}
+	while(!eof && result);
+	CloseHandle(hSource);
+	CloseHandle(hDestination);
+	delete[] IV;
+	return result;
 }
 
 bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 {
-	std::ifstream source(filepath.c_str(),ios::binary);
-	DWORD IVsize=0;
-	BYTE* IV = new BYTE(IVsize);
-	source.read((BYTE*)&IVsize,4);
-	source.read(IV,IVsize);
-
-	HCRYPTHASH hash;
-	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
-	if(!CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash))
-	{
-		OutputDebugStringA("CryptCreateHash FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
-	//хэширование парольной фразы
-	if(!CryptHashData(hash, (BYTE*)password.c_str(), password.size()*2, 0))
-	{
-		OutputDebugStringA("CryptHashData FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
-	//сессионный ключ с возможностью его экспорта
-	HCRYPTKEY SessionKey = 0;
-	if(!CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey))
-	{
-		OutputDebugStringA("CryptDeriveKey FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
-	CryptDestroyHash(hash);
-
-	//Укажем, что принятый IV будет инициализирующим для расшифровывания:
-	if(!CryptSetKeyParam(SessionKey, KP_IV, IV , 0))
-	{
-		OutputDebugStringA("CryptSetKeyParam FAILED") ;
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
+	HANDLE hSource = CreateFileW(
+					filepath.c_str(),
+					GENERIC_READ,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					OPEN_EXISTING,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hSource == INVALID_HANDLE_VALUE) return false;
 
 	wstringstream decryptpath;
 	decryptpath << filepath.c_str() <<".decrypted";
-	std::ofstream destination(decryptpath.str().c_str(), std::ios::binary);
 
-	DWORD BLOCK_LENGTH = 1024;
-	DWORD cbContent;	// Длина содержимого
-//	BYTE *pbContent = new BYTE(BLOCK_LENGTH);
-	vector<BYTE> Content;
-	Content.reserve(BLOCK_LENGTH);
-	do
+	HANDLE hDestination = CreateFileW(
+					decryptpath.str().c_str(),
+					GENERIC_WRITE,
+					0,
+					NULL,
+					CREATE_ALWAYS,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hDestination == INVALID_HANDLE_VALUE) return false;
+
+
+	bool result = true;
+	HCRYPTHASH hash;
+	HCRYPTKEY SessionKey = 0;
+
+	result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
+	result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0); //хэширование парольной фразы
+	result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey);
+	CryptDestroyHash(hash);
+
+	DWORD IVsize = 0;
+	CryptGetKeyParam(SessionKey, KP_IV, 0, &IVsize, 0);
+	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
+	BYTE* IV = new BYTE(IVsize);
+	//получение IV из файла
+	DWORD nRead = 0;
+	result &= ReadFile(
+					hSource,
+					IV,
+					IVsize,
+					&nRead,
+					NULL);
+	//Укажем, что новый IV будет использоваться в качестве инициализационного вектора шифрования:
+	result &= CryptSetKeyParam(SessionKey, KP_IV, IV , 0);
+
+
+
+	LARGE_INTEGER offset;
+	offset.QuadPart = 0;
+	DWORD nWrote = 0;
+	offset.QuadPart = IVsize;
+	bool eof = false;
+	vector<BYTE> content;
+	content.reserve(BLOCK_LENGTH);
+	while (!eof && result)
 	{
-		source.read(&Content[0], BLOCK_LENGTH);
-		cbContent = Content.size();
+		DWORD newPosition = SetFilePointer(
+					hSource,
+					offset.LowPart,
+					&offset.HighPart,
+					FILE_BEGIN);
+		result &= (newPosition == offset.QuadPart);
 
-		// расшифрование прочитанного блока на сессионном ключе.
-		if(CryptDecrypt(
-						SessionKey,
-						0,
-						source.eof(),
-						0,
-						&Content[0],
-						&cbContent))
+		result &= ReadFile(
+					hSource,
+					&content[0],
+					BLOCK_LENGTH,
+					&nRead,
+					NULL);
+
+		if (!result)
 		{
-			OutputDebugStringA( "*************Decryption succeeded********************.");
-			// Запись расшифрованного блока в файл.
-			destination.write(&Content[0], BLOCK_LENGTH);
+			return false;
 		}
-		else OutputDebugStringA("Encryption failed.");
-		Content.clear();
+
+		eof = (nRead < BLOCK_LENGTH);
+
+
+		result &= CryptDecrypt(
+					SessionKey,
+					0,
+					eof,
+					0,
+					&content[0],
+					&nRead);
+
+		result &= WriteFile(
+					hDestination,
+					&content[0],
+					nRead,
+					&nWrote,
+					NULL);
+        offset.QuadPart += nRead;
 	}
-	while (!source.eof());
-	CryptDestroyKey(SessionKey);
+	CloseHandle(hSource);
+	CloseHandle(hDestination);
+	delete[] IV;
+	return result;
 }
 
 

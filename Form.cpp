@@ -72,7 +72,10 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 
 	if(OpenFileDialog->Execute())
 	{
-		CSP->Encrypt_File(EnPasswordEdit->Text.c_str(),OpenFileDialog->FileName.c_str());
+		if(!CSP->Encrypt_File(EnPasswordEdit->Text.c_str(),OpenFileDialog->FileName.c_str()))
+		{
+            Application->MessageBoxW(L"Ошибка шифрования",L"Ошибка", MB_OK);
+        }
 	}
 
 
