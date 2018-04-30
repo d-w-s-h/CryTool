@@ -6,10 +6,12 @@
 #include "Form.h"
 
 
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TMainForm *MainForm;
+processingThread *th;
 
 
 //---------------------------------------------------------------------------
@@ -20,22 +22,47 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	CSP = new myCryptoClass( PROV_GOST_2001_DH);
 	MainForm->UsernameEdit->Text = (UnicodeString) CSP->GetUserName().c_str();
 	bool CreateContainer();
+	EncryptFileButton->Enabled =false;
+	DecryptFileButton->Enabled =false;
+	ExportKeyButton->Enabled =false;
+	GenerateKeyButton->Enabled =false;
+	LoadKeyButton->Enabled =false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
 {
-
-	CSP->CreateContainer(MainForm->UsernameEdit->Text.c_str());
+	if(CSP->CreateContainer(MainForm->UsernameEdit->Text.c_str()))
+	{
+		EncryptFileButton->Enabled =true;
+		DecryptFileButton->Enabled =true;
+		ExportKeyButton->Enabled =true;
+		GenerateKeyButton->Enabled =true;
+		LoadKeyButton->Enabled  =true;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::LoadContainerButtonClick(TObject *Sender)
 {
-    CSP->LoadContainer(MainForm->UsernameEdit->Text.c_str());
+	if(CSP->LoadContainer(MainForm->UsernameEdit->Text.c_str()))
+	{
+		EncryptFileButton->Enabled =true;
+		DecryptFileButton->Enabled =true;
+		ExportKeyButton->Enabled =true;
+		GenerateKeyButton->Enabled =true;
+		LoadKeyButton->Enabled  =true;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::DeleteContainerButtonClick(TObject *Sender)
 {
-    CSP->DeleteContainer(MainForm->UsernameEdit->Text.c_str());
+	if(CSP->DeleteContainer(MainForm->UsernameEdit->Text.c_str()))
+	{
+		EncryptFileButton->Enabled =false;
+		DecryptFileButton->Enabled =false;
+		ExportKeyButton->Enabled =false;
+		GenerateKeyButton->Enabled =false;
+		LoadKeyButton->Enabled =false;
+	}
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::FormClose(TObject *Sender, TCloseAction &Action)
@@ -72,10 +99,12 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 
 	if(OpenFileDialog->Execute())
 	{
-		if(!CSP->Encrypt_File(EnPasswordEdit->Text.c_str(),OpenFileDialog->FileName.c_str()))
-		{
-            Application->MessageBoxW(L"Ошибка шифрования",L"Ошибка", MB_OK);
-        }
+		th = new processingThread(
+						 true,
+						 CSP,
+						 EnPasswordEdit->Text.c_str(),
+						 OpenFileDialog->FileName.c_str(),
+						 false);
 	}
 
 
@@ -88,7 +117,13 @@ void __fastcall TMainForm::DecryptFileButtonClick(TObject *Sender)
 {
 	if(OpenFileDialog->Execute())
 	{
-		CSP->Decrypt_File(DePasswordEdit->Text.c_str(),OpenFileDialog->FileName.c_str());
+		th = new processingThread(
+						 false,
+						 CSP,
+						 DePasswordEdit->Text.c_str(),
+						 OpenFileDialog->FileName.c_str(),
+						 false);
+
 	}
 }
 //---------------------------------------------------------------------------

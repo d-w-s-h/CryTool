@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'CryTool'
-  ClientHeight = 181
+  ClientHeight = 183
   ClientWidth = 504
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -56,7 +56,7 @@ object MainForm: TMainForm
   end
   object EnPasswordEdit: TEdit
     Left = 226
-    Top = 115
+    Top = 107
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -65,7 +65,7 @@ object MainForm: TMainForm
   end
   object PassConfirmEdit: TEdit
     Left = 226
-    Top = 142
+    Top = 134
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -74,7 +74,7 @@ object MainForm: TMainForm
   end
   object DePasswordEdit: TEdit
     Left = 353
-    Top = 115
+    Top = 107
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -83,7 +83,7 @@ object MainForm: TMainForm
   end
   object EncryptFileButton: TButton
     Left = 226
-    Top = 23
+    Top = 15
     Width = 121
     Height = 86
     Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
@@ -92,7 +92,7 @@ object MainForm: TMainForm
   end
   object DecryptFileButton: TButton
     Left = 353
-    Top = 23
+    Top = 15
     Width = 121
     Height = 86
     Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
@@ -134,12 +134,19 @@ object MainForm: TMainForm
     TabOrder = 11
     Text = 'UsernameEdit'
   end
+  object ProgressBar1: TProgressBar
+    Left = 226
+    Top = 161
+    Width = 248
+    Height = 11
+    TabOrder = 12
+  end
   object OpenFileDialog: TOpenDialog
-    Left = 360
-    Top = 142
+    Left = 376
+    Top = 110
   end
   object SaveExKeyDialog: TSaveDialog
-    Left = 432
-    Top = 142
+    Left = 416
+    Top = 118
   end
 end

@@ -63,12 +63,17 @@ bool myCryptoClass::LoadContainer(wstring userName)
 		wstringstream deb;
 		deb << "A cryptcontext with the " << UserName << " key container has been acquired.\n" ;
 		OutputDebugStringW(deb.str().c_str());
+
 	}
-	else OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+	else
+	{
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
 }
 bool myCryptoClass::DeleteContainer(wstring userName)
 {
-    LPSTR pszUserName;		  // Буфер для хранения имени  ключевого контейнера.
+	LPSTR pszUserName;		  // Буфер для хранения имени  ключевого контейнера.
 	DWORD dwUserNameLen;	  // Длина буфера.
 	LPCWSTR UserName;	          // Добавленное по выбору имя пользователя
 	UserName = userName.c_str();
@@ -251,9 +256,10 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 					NULL);
 		offset.QuadPart += nRead;
 
-		debug << "encrypted: " <<  offset.QuadPart << " of " << sourceSize;
+		debug << "         encrypted: " <<  offset.QuadPart << " of " << sourceSize << "      ";
 		OutputDebugStringA(debug.str().c_str());
 		debug.str("");
+
 
 	}
 	while(!eof && result);
@@ -322,7 +328,10 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 	bool eof = false;
 	vector<BYTE> content;
 	content.reserve(BLOCK_LENGTH);
-	while (!eof && result)
+
+	stringstream debug;
+	DWORD sourceSize= GetFileSize(hSource, NULL);
+	do
 	{
 		DWORD newPosition = SetFilePointer(
 					hSource,
@@ -360,8 +369,15 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 					nRead,
 					&nWrote,
 					NULL);
-        offset.QuadPart += nRead;
+		offset.QuadPart += nRead;
+
+		debug << "        decrypted: " <<  offset.QuadPart << " of " << sourceSize << "      ";
+		OutputDebugStringA(debug.str().c_str());
+		debug.str("");
+
+
 	}
+	while (!eof && result);
 	CloseHandle(hSource);
 	CloseHandle(hDestination);
 	delete[] IV;

@@ -1,42 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.591,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.864,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.213,C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.072,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\lib\cpsupr2.lib</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.888,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincsp.h=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.114,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincspc.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.015,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincspc.h=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\myCryptoClass.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.009,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\lib\cprdr2.lib</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.955,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\lfmm.h=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.213,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.dfm=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.807,C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1.cbproj=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Project1.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.591,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.864,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.166,=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.213,C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.dfm=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.955,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\cpdrvlib.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.906,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\cpdrvlib.h=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.135,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\lfmm.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.213,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.166,=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.426,C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1PCH1.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Project1PCH1.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.045,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\lib\cprndm2.lib</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.967,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\myCryptoClass.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.955,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\lfmm.h=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.134,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincsp.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\myCryptoClass.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.939,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\cspvtable.h=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.463,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\cspvtable.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.213,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.426,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Project1PCH1.h=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.864,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.213,C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.022,=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.807,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Project1.cbproj=C:\Users\Dmitry-N56V\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.967,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.922,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\cspmm.h=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\myCryptoClass.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.134,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincsp.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.447,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\cspmm.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.562,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\WinCryptEx.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.114,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincspc.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.015,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincspc.h=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.888,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\wincsp.h=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.875,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.cpp=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.864,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\functions.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.269,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.562,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\WinCryptEx.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.491,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\CryTool.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Form.cpp</Transaction>
+    <Transaction>2018.04.30 13:36:37.968,=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
+    <Transaction>2018.04.30 13:37:13.069,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\processingThread.cpp=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.cpp</Transaction>
+    <Transaction>2018.04.30 13:37:13.070,C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\processingThread.h=C:\Users\Dmitry-N56V\Desktop\учёба\10 семестр\ИБТС(хорьков)\LABA8\CryTool\Unit1.h</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="lib"/>
@@ -50,5 +53,8 @@
     <File Path="myCryptoClass.cpp"/>
     <File Path="myCryptoClass.cpp"/>
     <File Path="myCryptoClass.h"/>
+    <File Path="processingThread.cpp"/>
+    <File Path="processingThread.cpp"/>
+    <File Path="processingThread.h"/>
   </ProjectSortOrder>
 </BorlandProject>

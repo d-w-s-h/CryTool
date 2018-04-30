@@ -10,6 +10,7 @@
 #include <Vcl.Dialogs.hpp>
 
 #include <stdio.h>
+#include <Vcl.ComCtrls.hpp>
 #ifdef _WIN32
 #   include <windows.h>
 #   include <wincrypt.h>
@@ -20,6 +21,7 @@
 #   include <CSP_WinCrypt.h>
 #endif
 #include "WinCryptEx.h"
+#include "processingThread.h"
 
 #include "myCryptoClass.h"
 //---------------------------------------------------------------------------
@@ -42,6 +44,7 @@ __published:	// IDE-managed Components
 	TEdit *UsernameEdit;
 	TLabel *Label1;
 	TLabel *Label2;
+	TProgressBar *ProgressBar1;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);
