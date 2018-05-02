@@ -35,16 +35,16 @@ class myCryptoClass
 {
 	protected:
 		HCRYPTPROV hProv;        // Дескриптор контекста  критографического провайдера.
-		HCRYPTKEY hKey;          // Дескриптор открытого/закрытого ключа.
+		//HCRYPTKEY hKey;          // Дескриптор открытого/закрытого ключа.
 		DWORD Prov;
 
-		HCRYPTKEY ExchKey ; //      ключ контейнера, предназначенный для обмена сессионными ключами
+		HCRYPTKEY ExchKey ; //      открытый ключ, предназначенный для обмена сессионными ключами
 		DWORD keyLen;  //длина ключа обмена
 		DWORD BLOCK_LENGTH;
 		HCRYPTKEY EnSessionKey;
 		HCRYPTKEY DeSessionKey;
-
-
+		HCRYPTKEY hAgreeKey;    //ключ согласования (им шифруется сессионный ключ)
+        BYTE *pbKeyBlobResponder;  // Указатель на ключевой BLOB получателя
 
 	public:
 		myCryptoClass(DWORD prov);
