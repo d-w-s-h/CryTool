@@ -27,6 +27,8 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	ExportKeyButton->Enabled =false;
 	GenerateKeyButton->Enabled =false;
 	LoadKeyButton->Enabled =false;
+
+	this->usingImportKey=false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
@@ -104,6 +106,7 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 						 CSP,
 						 EnPasswordEdit->Text.c_str(),
 						 OpenFileDialog->FileName.c_str(),
+						 usingImportKey,
 						 false);
 	}
 
@@ -122,10 +125,21 @@ void __fastcall TMainForm::DecryptFileButtonClick(TObject *Sender)
 						 CSP,
 						 DePasswordEdit->Text.c_str(),
 						 OpenFileDialog->FileName.c_str(),
+						 usingImportKey,
 						 false);
 
 	}
 }
 //---------------------------------------------------------------------------
 
+
+
+void __fastcall TMainForm::SessionExBtnClick(TObject *Sender)
+{
+	if(SaveExKeyDialog->Execute())
+	{
+		CSP->ExportSessionKey(SaveExKeyDialog->FileName.c_str());
+	}
+}
+//---------------------------------------------------------------------------
 

@@ -20,7 +20,13 @@
 //      }
 //---------------------------------------------------------------------------
 
-__fastcall processingThread::processingThread(bool isEncrypt , myCryptoClass *CSP,wstring password,wstring filepath, bool CreateSuspended)
+__fastcall processingThread::processingThread(bool isEncrypt ,
+											myCryptoClass *CSP,
+											wstring password,
+											wstring filepath,
+											bool usingImportKey,
+											bool CreateSuspended
+											)
 	: TThread(CreateSuspended)
 {
 	FreeOnTerminate = true;
@@ -28,6 +34,7 @@ __fastcall processingThread::processingThread(bool isEncrypt , myCryptoClass *CS
 	this->CSP = CSP;
 	this->Password = password;
 	this->Filepath = filepath;
+	this->UsingImportKey= usingImportKey;
 //	Form->ProgressBar->Position = this->progress;
 //	Form->ProgressBar->Max = this->FileSystem->getTotalClusters();
 
@@ -39,9 +46,9 @@ void __fastcall processingThread::Execute()
 	//---- Place thread code here ----
 	if (IsEncrypt)
 	{
-		CSP->Encrypt_File(this->Password.c_str(),this->Filepath.c_str());
+		CSP->Encrypt_File(this->Password.c_str(),this->Filepath.c_str(),UsingImportKey);
 	}
-	else CSP->Decrypt_File(this->Password.c_str(),this->Filepath.c_str() );
+	else CSP->Decrypt_File(this->Password.c_str(),this->Filepath.c_str(),UsingImportKey);
 }
 //---------------------------------------------------------------------------
 

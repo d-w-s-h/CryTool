@@ -43,7 +43,6 @@ bool myCryptoClass::CreateContainer(wstring userName)
 	else
 	{
 		OutputDebugStringW(L"A new key container has been created.\n");
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 	}
 
 }
@@ -63,7 +62,6 @@ bool myCryptoClass::LoadContainer(wstring userName)
 		wstringstream deb;
 		deb << "A cryptcontext with the " << UserName << " key container has been acquired.\n" ;
 		OutputDebugStringW(deb.str().c_str());
-
 	}
 	else
 	{
@@ -139,41 +137,36 @@ bool myCryptoClass::CreateExchangeKey()
 
 bool myCryptoClass::ExportExchangeKey(wstring filename)
 {
-	DWORD bufflen = 0;
-	CryptExportKey(ExchKey, 0, PUBLICKEYBLOB, 0, 0, &bufflen);
-	vector<BYTE> buffer(bufflen);
 
-	CryptExportKey(ExchKey, 0, PUBLICKEYBLOB, 0, &buffer[0], &bufflen);
-
-	ofstream outfile(filename.c_str(), ios::out | ios::binary);
-	outfile.write(&buffer[0], buffer.size());
-	outfile.close();
 }
 
-bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
+bool myCryptoClass::Encrypt_File(wstring password, wstring filepath, bool usingImportKey)
 {
 	bool result = true;
-	HCRYPTHASH hash;
-	HCRYPTKEY SessionKey = 0;
-	//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
-	result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
-	//хэширование парольной фразы
-	result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0);
-	//сессионный ключ с возможностью его экспорта
-	result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey);
-	CryptDestroyHash(hash);
+	if(!usingImportKey)
+	{
+		HCRYPTHASH hash;
+		this->EnSessionKey = 0;
+		//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
+		result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
+		//хэширование парольной фразы
+		result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0);
+		//сессионный ключ с возможностью его экспорта
+		result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &EnSessionKey);
+		CryptDestroyHash(hash);
+	}
 
 	DWORD IVsize = 0;
-	CryptGetKeyParam(SessionKey, KP_IV, 0, &IVsize, 0);
+	CryptGetKeyParam(EnSessionKey, KP_IV, 0, &IVsize, 0);
 	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
 	BYTE* IV = new BYTE(IVsize);
 	//получение адреса и длинны инит вектора
-	CryptGetKeyParam(SessionKey, KP_IV, IV , &IVsize, 0);
+	CryptGetKeyParam(EnSessionKey, KP_IV, IV , &IVsize, 0);
 	//заполнение буфера рендомом
 	CryptGenRandom(hProv, IVsize, IV );
 
 	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
-	result &= CryptSetKeyParam(SessionKey, KP_IV, IV , 0);
+	result &= CryptSetKeyParam(EnSessionKey, KP_IV, IV , 0);
 
 	//откроем файлы
 	HANDLE hSource = CreateFileW(
@@ -240,7 +233,7 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 		eof = (nRead < BLOCK_LENGTH);
 
 		result &= CryptEncrypt(
-					SessionKey,
+					EnSessionKey,
 					0,
 					eof,
 					0,
@@ -269,7 +262,7 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath)
 	return result;
 }
 
-bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
+bool myCryptoClass::Decrypt_File(wstring password, wstring filepath, bool usingImportKey)
 {
 	HANDLE hSource = CreateFileW(
 					filepath.c_str(),
@@ -296,16 +289,20 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 
 
 	bool result = true;
-	HCRYPTHASH hash;
-	HCRYPTKEY SessionKey = 0;
 
-	result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
-	result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0); //хэширование парольной фразы
-	result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &SessionKey);
-	CryptDestroyHash(hash);
+	if(!usingImportKey)
+	{
+		HCRYPTHASH hash;
+		this->DeSessionKey = 0;
+		result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
+		result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0); //хэширование парольной фразы
+		result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &DeSessionKey);
+		CryptDestroyHash(hash);
+	}
+
 
 	DWORD IVsize = 0;
-	CryptGetKeyParam(SessionKey, KP_IV, 0, &IVsize, 0);
+	CryptGetKeyParam(DeSessionKey, KP_IV, 0, &IVsize, 0);
 	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
 	BYTE* IV = new BYTE(IVsize);
 	//получение IV из файла
@@ -317,9 +314,7 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 					&nRead,
 					NULL);
 	//Укажем, что новый IV будет использоваться в качестве инициализационного вектора шифрования:
-	result &= CryptSetKeyParam(SessionKey, KP_IV, IV , 0);
-
-
+	result &= CryptSetKeyParam(DeSessionKey, KP_IV, IV , 0);
 
 	LARGE_INTEGER offset;
 	offset.QuadPart = 0;
@@ -356,7 +351,7 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 
 
 		result &= CryptDecrypt(
-					SessionKey,
+					DeSessionKey,
 					0,
 					eof,
 					0,
@@ -386,6 +381,35 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath)
 
 
 
+bool myCryptoClass::ExportSessionKey(wstring filename)
+{
+	DWORD bufflen = 0;
+	CryptExportKey(EnSessionKey, 0, SIMPLEBLOB, 0, 0, &bufflen);
+	vector<BYTE> blobbuffer(bufflen);
+
+	CryptExportKey(EnSessionKey, 0, SIMPLEBLOB, 0, &blobbuffer[0], &bufflen);
+
+//	ofstream outfile(filename.c_str(), ios::out | ios::binary);
+//	outfile.write(&buffer[0], buffer.size());
+//	outfile.close();
+
+	HANDLE hOutKeyFile = CreateFileW(
+					filename.c_str(),
+					GENERIC_READ,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					CREATE_ALWAYS,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hOutKeyFile == INVALID_HANDLE_VALUE) return false;
+	bool result = WriteFile(
+					hOutKeyFile,
+					&blobbuffer[0],
+					bufflen,
+					NULL,
+					NULL);
+
+}
 
 
 

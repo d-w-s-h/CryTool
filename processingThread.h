@@ -15,8 +15,9 @@ protected:
 	wstring Password;
 	wstring Filepath;
 	ULONGLONG *progress;
+    bool UsingImportKey;
 public:
-	__fastcall processingThread(bool isEncrypt , myCryptoClass *CSP,wstring password,wstring filepath, bool CreateSuspended);
+	__fastcall processingThread(bool isEncrypt , myCryptoClass *CSP,wstring password,wstring filepath, bool usingImportKey, bool CreateSuspended);
 
 };
 //---------------------------------------------------------------------------

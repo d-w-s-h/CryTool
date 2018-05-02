@@ -44,7 +44,8 @@ __published:	// IDE-managed Components
 	TEdit *UsernameEdit;
 	TLabel *Label1;
 	TLabel *Label2;
-	TProgressBar *ProgressBar1;
+	TButton *SessionExBtn;
+	TButton *SessionLoadBtn;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);
@@ -53,10 +54,12 @@ __published:	// IDE-managed Components
 	void __fastcall ExportKeyButtonClick(TObject *Sender);
 	void __fastcall EncryptFileButtonClick(TObject *Sender);
 	void __fastcall DecryptFileButtonClick(TObject *Sender);
+	void __fastcall SessionExBtnClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);
 	myCryptoClass *CSP;
+    bool usingImportKey;
 
 
 };

@@ -41,8 +41,9 @@ class myCryptoClass
 		HCRYPTKEY ExchKey ; //      ключ контейнера, предназначенный для обмена сессионными ключами
 		DWORD keyLen;  //длина ключа обмена
 		DWORD BLOCK_LENGTH;
+		HCRYPTKEY EnSessionKey;
+		HCRYPTKEY DeSessionKey;
 
-//		DWORD flag;
 
 
 	public:
@@ -58,8 +59,12 @@ class myCryptoClass
 		bool CreateExchangeKey();
 		bool LoadExchangeKey();
 		bool ExportExchangeKey(wstring filename);
-		bool Encrypt_File(wstring password, wstring filepath);
-		bool Decrypt_File(wstring password, wstring filepath);
+		bool Encrypt_File(wstring password, wstring filepath, bool usingImportKey);
+		bool Decrypt_File(wstring password, wstring filepath, bool usingImportKey);
+
+		bool LoadSessionKey(wstring filename);
+		bool ExportSessionKey(wstring filename);
+
 };
 
 
