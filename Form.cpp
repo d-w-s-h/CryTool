@@ -86,7 +86,6 @@ void __fastcall TMainForm::ExportKeyButtonClick(TObject *Sender)
 		CSP->ExportExchangeKey(SaveExKeyDialog->FileName.c_str());
 	}
 
-
 }
 //---------------------------------------------------------------------------
 
@@ -142,4 +141,5 @@ void __fastcall TMainForm::SessionExBtnClick(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
+
 

@@ -10,11 +10,12 @@ myCryptoClass::myCryptoClass(DWORD prov)
 {
 	this->Prov = prov;
 	this->hProv = 0;        // Дескриптор контекста  критографического провайдера.
-	this->hKey = 0;
+	//this->hKey = 0;
 	this->ExchKey = 0;
 	this->keyLen =0;
-    this->BLOCK_LENGTH =  1024;
-
+	this->BLOCK_LENGTH =  1024;
+	this->hAgreeKey = 0;
+	this->pbKeyBlobResponder = NULL;
 }
 
 bool myCryptoClass::CreateContainer(wstring userName)
@@ -83,7 +84,7 @@ bool myCryptoClass::DeleteContainer(wstring userName)
 					CRYPT_DELETEKEYSET))         // Значения флагов
 	{
 		wstringstream deb;
-		deb << "Container" << UserName << " is deleted !\n" ;
+		deb << "Container " << UserName << " is deleted !\n" ;
 		OutputDebugStringW(deb.str().c_str());
 	}
 	else OutputDebugStringA(this->ErrorIdToStr(GetLastError()).c_str());
@@ -92,7 +93,7 @@ bool myCryptoClass::DeleteContainer(wstring userName)
 bool myCryptoClass::CreateExchangeKey()
 {
 
-		// попытка получения дескриптора ключа обмена
+		// попытка получения дескриптора открытого ключа обмена
 	if(CryptGetUserKey(
 					hProv,                     // Дескриптор CSP
 					AT_KEYEXCHANGE,                   // Спецификация ключа
@@ -102,7 +103,7 @@ bool myCryptoClass::CreateExchangeKey()
 		return false;
 	}
 
-	// генерирование ключа
+	// генерирование пары ключей (где ExchKey - открытый ключ)
 
 	if(!CryptGenKey(
 					hProv,
@@ -125,7 +126,7 @@ bool myCryptoClass::CreateExchangeKey()
 	   OutputDebugStringA("********CryptGetKeyParam FAILED");
 	}
 	wstringstream deb;
-	deb << "Key lenght - " << DWORD(*pSizeData);
+	deb << "Key length - " << DWORD(*pSizeData);
 	OutputDebugStringW(deb.str().c_str());
 
 	CryptGetKeyParam(ExchKey, KP_ALGID, pSizeData, 0, 0) ;
@@ -137,7 +138,80 @@ bool myCryptoClass::CreateExchangeKey()
 
 bool myCryptoClass::ExportExchangeKey(wstring filename)
 {
+	 DWORD dwBlobLen;
+	 //Получение дескриптора открытого ключа (если уже есть) или создание нового
+	 CreateExchangeKey();
+	 //Определение размера BLOBа открытого ключа и распределение памяти
+     if(CryptExportKey(
+        ExchKey,
+        0,
+        PUBLICKEYBLOB,
+        0,
+		NULL,
+		&dwBlobLen))
+	{
+		OutputDebugStringA("Size of the BLOB for the responder public key determined. \n");
+    }
+    else
+	{
+		OutputDebugStringA("Error computing BLOB length.\n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
 
+	pbKeyBlobResponder = (BYTE*)malloc(dwBlobLen);
+	if(pbKeyBlobResponder)
+	{
+		OutputDebugStringA("Memory has been allocated for the BLOB. \n");
+	}
+	else
+	{
+		OutputDebugStringA("Out of memory. \n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+	//Экспортирование открытого ключа получателя в BLOB открытого ключа
+    if(CryptExportKey(
+		ExchKey,
+        0,
+        PUBLICKEYBLOB,
+		0,
+		pbKeyBlobResponder,
+		&dwBlobLen))
+	{
+		OutputDebugStringA("Contents have been written to the BLOB. \n");
+	}
+	else
+    {
+		OutputDebugStringA("Error during CryptExportKey.\n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+
+	HANDLE hOutKeyFile = CreateFileW(
+		filename.c_str(),
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL,
+		CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);
+	if (hOutKeyFile == INVALID_HANDLE_VALUE) return false;
+	if(WriteFile(
+		hOutKeyFile,
+		pbKeyBlobResponder,
+		dwBlobLen,
+		NULL,
+		NULL))
+		{
+			OutputDebugStringA("Contents have been written to the file. \n");
+			return true;
+		}
+		else
+		{
+			OutputDebugStringA("Error writing to the file. \n");
+			return false;
+		}
 }
 
 bool myCryptoClass::Encrypt_File(wstring password, wstring filepath, bool usingImportKey)
@@ -160,7 +234,7 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath, bool usingI
 	CryptGetKeyParam(EnSessionKey, KP_IV, 0, &IVsize, 0);
 	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
 	BYTE* IV = new BYTE(IVsize);
-	//получение адреса и длинны инит вектора
+	//получение адреса и длины инит вектора
 	CryptGetKeyParam(EnSessionKey, KP_IV, IV , &IVsize, 0);
 	//заполнение буфера рендомом
 	CryptGenRandom(hProv, IVsize, IV );
@@ -712,8 +786,8 @@ string __fastcall myCryptoClass::AlgIDToStr( DWORD alg_type )
 
 void myCryptoClass::CleanUp()
 {
-	if(this->hKey)
-	CryptDestroyKey(this->hKey);
+	//if(this->hKey)
+	//CryptDestroyKey(this->hKey);
 	if(this->hProv)
 	CryptReleaseContext(this->hProv, 0);
 }
