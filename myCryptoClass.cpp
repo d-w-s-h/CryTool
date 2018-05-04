@@ -15,7 +15,8 @@ myCryptoClass::myCryptoClass(DWORD prov)
 	this->keyLen =0;
 	this->BLOCK_LENGTH =  1024;
 	this->hAgreeKey = 0;
-	this->pbKeyBlobResponder = NULL;
+	this->pbKeyBlobInternal = NULL;
+	this->pbKeyBlobExternal = NULL;
 }
 
 bool myCryptoClass::CreateContainer(wstring userName)
@@ -142,42 +143,32 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 	 //Получение дескриптора открытого ключа (если уже есть) или создание нового
 	 CreateExchangeKey();
 	 //Определение размера BLOBа открытого ключа и распределение памяти
-     if(CryptExportKey(
-        ExchKey,
-        0,
-        PUBLICKEYBLOB,
-        0,
-		NULL,
-		&dwBlobLen))
+	 if(CryptExportKey(
+					ExchKey,
+					0,
+					PUBLICKEYBLOB,
+					0,
+					NULL,
+					&dwBlobLen))
 	{
 		OutputDebugStringA("Size of the BLOB for the responder public key determined. \n");
-    }
-    else
+	}
+	else
 	{
 		OutputDebugStringA("Error computing BLOB length.\n");
 		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
 		return false;
 	}
 
-	pbKeyBlobResponder = (BYTE*)malloc(dwBlobLen);
-	if(pbKeyBlobResponder)
-	{
-		OutputDebugStringA("Memory has been allocated for the BLOB. \n");
-	}
-	else
-	{
-		OutputDebugStringA("Out of memory. \n");
-		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
-		return false;
-	}
+	pbKeyBlobInternal = (BYTE*)malloc(dwBlobLen);
 	//Экспортирование открытого ключа получателя в BLOB открытого ключа
     if(CryptExportKey(
-		ExchKey,
-        0,
-        PUBLICKEYBLOB,
-		0,
-		pbKeyBlobResponder,
-		&dwBlobLen))
+					ExchKey,
+					0,
+					PUBLICKEYBLOB,
+					0,
+					pbKeyBlobInternal,
+					&dwBlobLen))
 	{
 		OutputDebugStringA("Contents have been written to the BLOB. \n");
 	}
@@ -189,30 +180,101 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 	}
 
 	HANDLE hOutKeyFile = CreateFileW(
-		filename.c_str(),
-		GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL,
-		CREATE_ALWAYS,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL);
+					filename.c_str(),
+					GENERIC_READ | GENERIC_WRITE,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					CREATE_ALWAYS,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
 	if (hOutKeyFile == INVALID_HANDLE_VALUE) return false;
 	if(WriteFile(
-		hOutKeyFile,
-		pbKeyBlobResponder,
-		dwBlobLen,
-		NULL,
-		NULL))
-		{
-			OutputDebugStringA("Contents have been written to the file. \n");
-			return true;
-		}
-		else
-		{
-			OutputDebugStringA("Error writing to the file. \n");
-			return false;
-		}
+					hOutKeyFile,
+					pbKeyBlobInternal,
+					dwBlobLen,
+					NULL,
+					NULL))
+	{
+		OutputDebugStringA("Contents have been written to the file. \n");
+		return true;
+	}
+	else
+	{
+		OutputDebugStringA("Error writing to the file. \n");
+		return false;
+	}
+	CloseHandle(hOutKeyFile);
+
 }
+bool myCryptoClass::LoadExchangeKey(wstring filename)
+{
+	DWORD dwBlobLen;
+	CreateExchangeKey();
+	//Определение размера BLOBа открытого ключа и распределение памяти
+	if(CryptExportKey(
+					ExchKey,
+					0,
+					PUBLICKEYBLOB,
+					0,
+					NULL,
+					&dwBlobLen))
+	{
+		OutputDebugStringA("Size of the BLOB for the responder public key determined. \n");
+	}
+	else
+	{
+		OutputDebugStringA("Error computing BLOB length.\n");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+
+	pbKeyBlobExternal = (BYTE*)malloc(dwBlobLen);
+
+	HANDLE hInKeyFile = CreateFileW(
+					filename.c_str(),
+					GENERIC_READ | GENERIC_WRITE,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					OPEN_EXISTING,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hInKeyFile == INVALID_HANDLE_VALUE) return false;
+
+	if(ReadFile(
+					hInKeyFile,
+					pbKeyBlobExternal,
+					dwBlobLen,
+					NULL,
+					NULL))
+	{
+		OutputDebugStringA("PUBLICKKEY is read \n");
+
+	}
+	else
+	{
+		OutputDebugStringA("Error reading to the file. \n");
+		return false;
+	}
+	// Получение ключа согласования импортом открытого ключа
+	if(CryptImportKey(
+					hProv,
+					pbKeyBlobExternal,
+					dwBlobLen,
+					ExchKey,
+					0,
+					&hAgreeKey))
+    {
+		OutputDebugStringA("Public key has been imported. \n");
+    }
+    else
+	{
+		OutputDebugStringA("Error during CryptImportKey public key.");
+		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+	}
+	CloseHandle(hInKeyFile);
+
+}
+
 
 bool myCryptoClass::Encrypt_File(wstring password, wstring filepath, bool usingImportKey)
 {
@@ -361,7 +423,6 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath, bool usingI
 					NULL);
 	if (hDestination == INVALID_HANDLE_VALUE) return false;
 
-
 	bool result = true;
 
 	if(!usingImportKey)
@@ -458,18 +519,14 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath, bool usingI
 bool myCryptoClass::ExportSessionKey(wstring filename)
 {
 	DWORD bufflen = 0;
-	CryptExportKey(EnSessionKey, 0, SIMPLEBLOB, 0, 0, &bufflen);
-	vector<BYTE> blobbuffer(bufflen);
+	CryptExportKey(EnSessionKey, hAgreeKey, SIMPLEBLOB, 0, 0, &bufflen);
+	BYTE *blobbuffer = new BYTE[bufflen];
 
-	CryptExportKey(EnSessionKey, 0, SIMPLEBLOB, 0, &blobbuffer[0], &bufflen);
-
-//	ofstream outfile(filename.c_str(), ios::out | ios::binary);
-//	outfile.write(&buffer[0], buffer.size());
-//	outfile.close();
+	CryptExportKey(EnSessionKey, hAgreeKey, SIMPLEBLOB, 0, blobbuffer, &bufflen);
 
 	HANDLE hOutKeyFile = CreateFileW(
 					filename.c_str(),
-					GENERIC_READ,
+					GENERIC_READ | GENERIC_WRITE,
 					FILE_SHARE_READ | FILE_SHARE_WRITE,
 					NULL,
 					CREATE_ALWAYS,
@@ -478,14 +535,73 @@ bool myCryptoClass::ExportSessionKey(wstring filename)
 	if (hOutKeyFile == INVALID_HANDLE_VALUE) return false;
 	bool result = WriteFile(
 					hOutKeyFile,
-					&blobbuffer[0],
+					blobbuffer,
 					bufflen,
 					NULL,
 					NULL);
-
+	delete(blobbuffer);
+	CloseHandle(hOutKeyFile);
 }
 
+bool myCryptoClass::LoadSessionKey(wstring filename)
+{
+	// Определение размера BLOBа сессионного ключа и распределение памяти.
+	DWORD dwBlobLenSimple = 0;
+	HANDLE hInKeyFile = CreateFileW(
+					filename.c_str(),
+					GENERIC_READ,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					OPEN_EXISTING,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+	if (hInKeyFile == INVALID_HANDLE_VALUE) return false;
 
+	dwBlobLenSimple = GetFileSize(hInKeyFile, NULL);
+
+	BYTE *blobbuffer = new BYTE[dwBlobLenSimple];
+
+	bool result = ReadFile(
+					hInKeyFile,
+					blobbuffer,
+					dwBlobLenSimple,
+					NULL,
+					NULL);
+
+    // Получение сессионного ключа импортом зашифрованного сессионного ключа
+	// на ключе Agree.
+	if(CryptImportKey(
+					hProv,
+					blobbuffer,
+					dwBlobLenSimple,
+					hAgreeKey,
+					0,
+					&EnSessionKey))
+	{
+		OutputDebugStringA("The session key has been imported. \n");
+	}
+	else
+	{
+		OutputDebugStringA("Error during CryptImportKey session key.");
+	}
+	    if(CryptImportKey(
+					hProv,
+					blobbuffer,
+					dwBlobLenSimple,
+					hAgreeKey,
+					0,
+					&DeSessionKey))
+	{
+		OutputDebugStringA("The session key has been imported. \n");
+	}
+	else
+	{
+		OutputDebugStringA("Error during CryptImportKey session key.");
+	}
+
+	delete(blobbuffer);
+	CloseHandle(hInKeyFile);
+}
 
 
 
@@ -790,4 +906,6 @@ void myCryptoClass::CleanUp()
 	//CryptDestroyKey(this->hKey);
 	if(this->hProv)
 	CryptReleaseContext(this->hProv, 0);
+	delete(this->pbKeyBlobInternal) ;
+	delete(this->pbKeyBlobExternal) ;
 }

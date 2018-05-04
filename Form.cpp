@@ -143,3 +143,21 @@ void __fastcall TMainForm::SessionExBtnClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 
+void __fastcall TMainForm::LoadKeyButtonClick(TObject *Sender)
+{
+	if(OpenFileDialog->Execute())
+	{
+		CSP->LoadExchangeKey(OpenFileDialog->FileName.c_str());
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
+{
+	if(OpenFileDialog->Execute())
+	{
+		CSP->LoadSessionKey(OpenFileDialog->FileName.c_str());
+	}
+}
+//---------------------------------------------------------------------------
+

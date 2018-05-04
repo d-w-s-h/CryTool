@@ -44,7 +44,8 @@ class myCryptoClass
 		HCRYPTKEY EnSessionKey;
 		HCRYPTKEY DeSessionKey;
 		HCRYPTKEY hAgreeKey;    //ключ согласовани€ (им шифруетс€ сессионный ключ)
-        BYTE *pbKeyBlobResponder;  // ”казатель на ключевой BLOB получател€
+		BYTE *pbKeyBlobInternal;  // ”казатель на наш ключевой BLOB
+		BYTE *pbKeyBlobExternal;  // ”казатель на присланный ключевой BLOB
 
 	public:
 		myCryptoClass(DWORD prov);
@@ -57,7 +58,7 @@ class myCryptoClass
 		bool DeleteContainer(wstring userName);
 
 		bool CreateExchangeKey();
-		bool LoadExchangeKey();
+		bool LoadExchangeKey(wstring filename);
 		bool ExportExchangeKey(wstring filename);
 		bool Encrypt_File(wstring password, wstring filepath, bool usingImportKey);
 		bool Decrypt_File(wstring password, wstring filepath, bool usingImportKey);

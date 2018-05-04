@@ -55,6 +55,8 @@ __published:	// IDE-managed Components
 	void __fastcall EncryptFileButtonClick(TObject *Sender);
 	void __fastcall DecryptFileButtonClick(TObject *Sender);
 	void __fastcall SessionExBtnClick(TObject *Sender);
+	void __fastcall LoadKeyButtonClick(TObject *Sender);
+	void __fastcall SessionLoadBtnClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

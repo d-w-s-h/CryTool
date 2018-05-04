@@ -36,6 +36,7 @@ object MainForm: TMainForm
     Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
     TabOrder = 0
     WordWrap = True
+    OnClick = LoadKeyButtonClick
   end
   object GenerateKeyButton: TButton
     Left = 105
@@ -157,6 +158,7 @@ object MainForm: TMainForm
     Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
     TabOrder = 13
     WordWrap = True
+    OnClick = SessionLoadBtnClick
   end
   object OpenFileDialog: TOpenDialog
     Left = 376
