@@ -18,6 +18,10 @@ protected:
     bool UsingImportKey;
 public:
 	__fastcall processingThread(bool isEncrypt , myCryptoClass *CSP,wstring password,wstring filepath, bool usingImportKey, bool CreateSuspended);
+	void __fastcall EncryptInfoGood();
+	void __fastcall EncryptInfoError();
+	void __fastcall DecryptInfoGood();
+    void __fastcall DecryptInfoError();
 
 };
 //---------------------------------------------------------------------------

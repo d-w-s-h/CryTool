@@ -41,10 +41,12 @@ bool myCryptoClass::CreateContainer(wstring userName)
 	{
 		OutputDebugStringW(L"Could not create a new key container.\n");
 		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		return true;
 	}
 	else
 	{
 		OutputDebugStringW(L"A new key container has been created.\n");
+		return true;
 	}
 
 }
@@ -64,6 +66,7 @@ bool myCryptoClass::LoadContainer(wstring userName)
 		wstringstream deb;
 		deb << "A cryptcontext with the " << UserName << " key container has been acquired.\n" ;
 		OutputDebugStringW(deb.str().c_str());
+		return true;
 	}
 	else
 	{
@@ -87,14 +90,19 @@ bool myCryptoClass::DeleteContainer(wstring userName)
 		wstringstream deb;
 		deb << "Container " << UserName << " is deleted !\n" ;
 		OutputDebugStringW(deb.str().c_str());
+        return true;
 	}
-	else OutputDebugStringA(this->ErrorIdToStr(GetLastError()).c_str());
+	else
+	{
+		OutputDebugStringA(this->ErrorIdToStr(GetLastError()).c_str());
+		return false;
+	}
+
 }
 
 bool myCryptoClass::CreateExchangeKey()
 {
-
-		// попытка получения дескриптора открытого ключа обмена
+	// попытка получения дескриптора открытого ключа обмена
 	if(CryptGetUserKey(
 					hProv,                     // Дескриптор CSP
 					AT_KEYEXCHANGE,                   // Спецификация ключа
@@ -125,6 +133,7 @@ bool myCryptoClass::CreateExchangeKey()
 	if(!CryptGetKeyParam(ExchKey, KP_KEYLEN, pSizeData, &sizeofkeysize,0))
 	{
 	   OutputDebugStringA("********CryptGetKeyParam FAILED");
+	   return false;
 	}
 	wstringstream deb;
 	deb << "Key length - " << DWORD(*pSizeData);
@@ -134,6 +143,7 @@ bool myCryptoClass::CreateExchangeKey()
 	stringstream deb2;
 	deb2 << "Key algorithm - " << this->AlgIDToStr(DWORD(*pSizeData));
 	OutputDebugStringA(deb2.str().c_str());
+	return true;
 
 }
 
@@ -196,15 +206,15 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 					NULL))
 	{
 		OutputDebugStringA("Contents have been written to the file. \n");
-		return true;
 	}
 	else
 	{
 		OutputDebugStringA("Error writing to the file. \n");
+		CloseHandle(hOutKeyFile);
 		return false;
 	}
 	CloseHandle(hOutKeyFile);
-
+	return true;
 }
 bool myCryptoClass::LoadExchangeKey(wstring filename)
 {
@@ -270,8 +280,11 @@ bool myCryptoClass::LoadExchangeKey(wstring filename)
 	{
 		OutputDebugStringA("Error during CryptImportKey public key.");
 		OutputDebugStringA(ErrorIdToStr(GetLastError()).c_str());
+		CloseHandle(hInKeyFile);
+		return false;
 	}
 	CloseHandle(hInKeyFile);
+	return true;
 
 }
 
@@ -539,8 +552,20 @@ bool myCryptoClass::ExportSessionKey(wstring filename)
 					bufflen,
 					NULL,
 					NULL);
+	if (result == true)
+	{
+		OutputDebugStringA("The session key has been written to the file. \n");
+	}
+	else
+	{
+		OutputDebugStringA("Error writing to file session key. \n");
+		delete(blobbuffer);
+		CloseHandle(hOutKeyFile);
+		return true;
+	}
 	delete(blobbuffer);
 	CloseHandle(hOutKeyFile);
+	return true;
 }
 
 bool myCryptoClass::LoadSessionKey(wstring filename)
@@ -567,6 +592,16 @@ bool myCryptoClass::LoadSessionKey(wstring filename)
 					dwBlobLenSimple,
 					NULL,
 					NULL);
+
+	if (result == true)
+	{
+		OutputDebugStringA("File  with session key was successfully read. \n");
+	}
+	else
+	{
+		OutputDebugStringA("File  with session key was not read. \n");
+		return false;
+	}
 
     // Получение сессионного ключа импортом зашифрованного сессионного ключа
 	// на ключе Agree.
@@ -597,10 +632,14 @@ bool myCryptoClass::LoadSessionKey(wstring filename)
 	else
 	{
 		OutputDebugStringA("Error during CryptImportKey session key.");
+		delete(blobbuffer);
+		CloseHandle(hInKeyFile);
+		return false;
 	}
 
 	delete(blobbuffer);
 	CloseHandle(hInKeyFile);
+	return true;
 }
 
 
