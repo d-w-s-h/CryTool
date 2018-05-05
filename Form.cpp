@@ -27,6 +27,8 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	ExportKeyButton->Enabled =false;
 	GenerateKeyButton->Enabled =false;
 	LoadKeyButton->Enabled =false;
+	SessionExBtn->Enabled = false;
+	SessionLoadBtn->Enabled = false;
 
 	this->usingImportKey=false;
 }
@@ -40,6 +42,8 @@ void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
 		ExportKeyButton->Enabled =true;
 		GenerateKeyButton->Enabled =true;
 		LoadKeyButton->Enabled  =true;
+		SessionLoadBtn->Enabled = true;
+		InfoLabel->Caption = "Ошибка создания конейнера (либо контейнер был создан ранее - попробуйте загрузить его)";
 	}
 }
 //---------------------------------------------------------------------------
@@ -52,6 +56,12 @@ void __fastcall TMainForm::LoadContainerButtonClick(TObject *Sender)
 		ExportKeyButton->Enabled =true;
 		GenerateKeyButton->Enabled =true;
 		LoadKeyButton->Enabled  =true;
+		SessionLoadBtn->Enabled = true;
+		InfoLabel->Caption = "Контейнер был успешно загружен";
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка загрузки конейнера (либо контейнер был загружен ранее)";
 	}
 }
 //---------------------------------------------------------------------------
@@ -64,6 +74,13 @@ void __fastcall TMainForm::DeleteContainerButtonClick(TObject *Sender)
 		ExportKeyButton->Enabled =false;
 		GenerateKeyButton->Enabled =false;
 		LoadKeyButton->Enabled =false;
+		SessionExBtn->Enabled = false;
+		SessionLoadBtn->Enabled = false;
+		InfoLabel->Caption = "Контейнер был успешно удален";
+	}
+	else
+	{
+		InfoLabel->Caption = "Контейнер не был удален (либо удален ранее)";
 	}
 }
 //---------------------------------------------------------------------------
@@ -74,7 +91,15 @@ void __fastcall TMainForm::FormClose(TObject *Sender, TCloseAction &Action)
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::GenerateKeyButtonClick(TObject *Sender)
 {
-	CSP->CreateExchangeKey();
+	if(CSP->CreateExchangeKey())
+	{
+		SessionExBtn->Enabled = true;
+		InfoLabel->Caption = "Пара ключей сгенерирована";
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка генерации ключей (либо ключи уже был сгенерированы ранее)";
+	}
 }
 //---------------------------------------------------------------------------
 
@@ -84,6 +109,11 @@ void __fastcall TMainForm::ExportKeyButtonClick(TObject *Sender)
 	if(SaveExKeyDialog->Execute())
 	{
 		CSP->ExportExchangeKey(SaveExKeyDialog->FileName.c_str());
+		InfoLabel->Caption = "Открытый ключ успешно экспортирован";
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка экспорта открытого ключа";
 	}
 
 }
@@ -98,6 +128,7 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 		return;
 	}
 
+	usingImportKey = UsingImportKeyCheck->Checked;
 	if(OpenFileDialog->Execute())
 	{
 		th = new processingThread(
@@ -108,8 +139,7 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 						 usingImportKey,
 						 false);
 	}
-
-
+	SessionExBtn->Enabled = true;
 
 }
 //---------------------------------------------------------------------------
@@ -117,6 +147,7 @@ void __fastcall TMainForm::EncryptFileButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::DecryptFileButtonClick(TObject *Sender)
 {
+    usingImportKey = UsingImportKeyCheck->Checked;
 	if(OpenFileDialog->Execute())
 	{
 		th = new processingThread(
@@ -128,6 +159,7 @@ void __fastcall TMainForm::DecryptFileButtonClick(TObject *Sender)
 						 false);
 
 	}
+	SessionExBtn->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -138,7 +170,13 @@ void __fastcall TMainForm::SessionExBtnClick(TObject *Sender)
 	if(SaveExKeyDialog->Execute())
 	{
 		CSP->ExportSessionKey(SaveExKeyDialog->FileName.c_str());
+		InfoLabel->Caption = "Сессионный ключ успешно экспортирован";
 	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка экспорта сессионного ключа";
+	}
+
 }
 //---------------------------------------------------------------------------
 
@@ -148,6 +186,11 @@ void __fastcall TMainForm::LoadKeyButtonClick(TObject *Sender)
 	if(OpenFileDialog->Execute())
 	{
 		CSP->LoadExchangeKey(OpenFileDialog->FileName.c_str());
+		InfoLabel->Caption = "Открытый ключ успешно импортирован";
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка импорта открытого ключа";
 	}
 }
 //---------------------------------------------------------------------------
@@ -157,7 +200,14 @@ void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
 	if(OpenFileDialog->Execute())
 	{
 		CSP->LoadSessionKey(OpenFileDialog->FileName.c_str());
+		InfoLabel->Caption = "Сессионный ключ успешно импортирован";
+	}
+	else
+	{
+        InfoLabel->Caption = "Ошибка импорта сессионного ключа";
 	}
 }
 //---------------------------------------------------------------------------
+
+
 
