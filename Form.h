@@ -48,8 +48,6 @@ __published:	// IDE-managed Components
 	TButton *SessionLoadBtn;
 	TCheckBox *UsingImportKeyCheck;
 	TLabel *InfoLabel;
-	TLabel *Label3;
-	TLabel *Label4;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);

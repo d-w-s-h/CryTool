@@ -2,8 +2,8 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'CryTool'
-  ClientHeight = 253
-  ClientWidth = 643
+  ClientHeight = 206
+  ClientWidth = 459
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -29,24 +29,16 @@ object MainForm: TMainForm
     Caption = #1050#1083#1102#1095#1080' '#1086#1073#1084#1077#1085#1072
   end
   object InfoLabel: TLabel
-    Left = 16
-    Top = 216
+    Left = 8
+    Top = 187
     Width = 3
     Height = 13
-  end
-  object Label3: TLabel
-    Left = 246
-    Top = 128
-    Width = 41
-    Height = 13
-    Caption = #1055#1072#1088#1086#1083#1100':'
-  end
-  object Label4: TLabel
-    Left = 246
-    Top = 155
-    Width = 80
-    Height = 13
-    Caption = #1055#1086#1074#1090#1086#1088' '#1087#1072#1088#1086#1083#1103':'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clMenuHighlight
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
   end
   object LoadKeyButton: TButton
     Left = 105
@@ -81,8 +73,8 @@ object MainForm: TMainForm
     OnClick = ExportKeyButtonClick
   end
   object EnPasswordEdit: TEdit
-    Left = 332
-    Top = 125
+    Left = 202
+    Top = 85
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -90,8 +82,8 @@ object MainForm: TMainForm
     Text = '111'
   end
   object PassConfirmEdit: TEdit
-    Left = 332
-    Top = 152
+    Left = 202
+    Top = 112
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -99,8 +91,8 @@ object MainForm: TMainForm
     Text = '111'
   end
   object DePasswordEdit: TEdit
-    Left = 459
-    Top = 125
+    Left = 329
+    Top = 85
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -108,8 +100,8 @@ object MainForm: TMainForm
     Text = '111'
   end
   object EncryptFileButton: TButton
-    Left = 332
-    Top = 48
+    Left = 202
+    Top = 8
     Width = 121
     Height = 71
     Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
@@ -117,8 +109,8 @@ object MainForm: TMainForm
     OnClick = EncryptFileButtonClick
   end
   object DecryptFileButton: TButton
-    Left = 459
-    Top = 49
+    Left = 329
+    Top = 9
     Width = 121
     Height = 71
     Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
@@ -161,10 +153,10 @@ object MainForm: TMainForm
     Text = 'UsernameEdit'
   end
   object SessionExBtn: TButton
-    Left = 332
-    Top = 179
+    Left = 202
+    Top = 139
     Width = 121
-    Height = 37
+    Height = 42
     Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
     Enabled = False
     TabOrder = 12
@@ -172,29 +164,30 @@ object MainForm: TMainForm
     OnClick = SessionExBtnClick
   end
   object SessionLoadBtn: TButton
-    Left = 459
-    Top = 179
+    Left = 329
+    Top = 139
     Width = 121
-    Height = 37
+    Height = 42
     Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
     TabOrder = 13
     WordWrap = True
     OnClick = SessionLoadBtnClick
   end
   object UsingImportKeyCheck: TCheckBox
-    Left = 317
-    Top = 10
-    Width = 278
-    Height = 17
-    Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1080#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1085#1085#1099#1081' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
+    Left = 329
+    Top = 112
+    Width = 121
+    Height = 21
+    Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1082#1083#1102#1095
     TabOrder = 14
+    WordWrap = True
   end
   object OpenFileDialog: TOpenDialog
-    Left = 594
-    Top = 128
+    Left = 320
+    Top = 200
   end
   object SaveExKeyDialog: TSaveDialog
-    Left = 592
-    Top = 175
+    Left = 254
+    Top = 207
   end
 end

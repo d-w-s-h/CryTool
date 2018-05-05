@@ -43,6 +43,10 @@ void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
 		GenerateKeyButton->Enabled =true;
 		LoadKeyButton->Enabled  =true;
 		SessionLoadBtn->Enabled = true;
+		InfoLabel->Caption = "Контейнер создан";
+	}
+	else
+	{
 		InfoLabel->Caption = "Ошибка создания конейнера (либо контейнер был создан ранее - попробуйте загрузить его)";
 	}
 }
@@ -208,6 +212,8 @@ void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
+
+
 
 
 
