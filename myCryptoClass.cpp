@@ -10,7 +10,6 @@ myCryptoClass::myCryptoClass(DWORD prov)
 {
 	this->Prov = prov;
 	this->hProv = 0;        // Дескриптор контекста  критографического провайдера.
-	//this->hKey = 0;
 	this->ExchKey = 0;
 	this->keyLen =0;
 	this->BLOCK_LENGTH =  1024;

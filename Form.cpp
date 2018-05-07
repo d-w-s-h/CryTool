@@ -4,6 +4,8 @@
 #pragma hdrstop
 
 #include "Form.h"
+#include <string>
+#include <sstream>
 
 
 
@@ -31,6 +33,7 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	SessionLoadBtn->Enabled = false;
 
 	this->usingImportKey=false;
+	this->isPublicKeyLoaded=false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
@@ -43,7 +46,10 @@ void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
 		GenerateKeyButton->Enabled =true;
 		LoadKeyButton->Enabled  =true;
 		SessionLoadBtn->Enabled = true;
-		InfoLabel->Caption = "Контейнер создан";
+		stringstream msg;
+		msg << "Контейнер " << CSP->GetUserName().c_str() <<  " создан";
+
+		InfoLabel->Caption = msg.str().c_str();
 	}
 	else
 	{
@@ -81,6 +87,7 @@ void __fastcall TMainForm::DeleteContainerButtonClick(TObject *Sender)
 		SessionExBtn->Enabled = false;
 		SessionLoadBtn->Enabled = false;
 		InfoLabel->Caption = "Контейнер был успешно удален";
+		this->isPublicKeyLoaded=false;
 	}
 	else
 	{
@@ -97,7 +104,7 @@ void __fastcall TMainForm::GenerateKeyButtonClick(TObject *Sender)
 {
 	if(CSP->CreateExchangeKey())
 	{
-		SessionExBtn->Enabled = true;
+//		SessionExBtn->Enabled = true;
 		InfoLabel->Caption = "Пара ключей сгенерирована";
 	}
 	else
@@ -163,7 +170,7 @@ void __fastcall TMainForm::DecryptFileButtonClick(TObject *Sender)
 						 false);
 
 	}
-	SessionExBtn->Enabled = false;
+	SessionExBtn->Enabled = true;
 }
 //---------------------------------------------------------------------------
 
@@ -173,6 +180,11 @@ void __fastcall TMainForm::SessionExBtnClick(TObject *Sender)
 {
 	if(SaveExKeyDialog->Execute())
 	{
+		if(!this->isPublicKeyLoaded)
+		{
+			Application->MessageBoxW(L"Для экспортирования зашифрованного сессионного ключа сначала необходимо импортировать открытый ключ удаленного пользователя, с которым будет осуществляться обмен.",L"Ошибка", MB_OK | MB_ICONWARNING);
+			return;
+		}
 		CSP->ExportSessionKey(SaveExKeyDialog->FileName.c_str());
 		InfoLabel->Caption = "Сессионный ключ успешно экспортирован";
 	}
@@ -191,6 +203,7 @@ void __fastcall TMainForm::LoadKeyButtonClick(TObject *Sender)
 	{
 		CSP->LoadExchangeKey(OpenFileDialog->FileName.c_str());
 		InfoLabel->Caption = "Открытый ключ успешно импортирован";
+		this->isPublicKeyLoaded=true;
 	}
 	else
 	{
@@ -203,6 +216,11 @@ void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
 {
 	if(OpenFileDialog->Execute())
 	{
+        if(!this->isPublicKeyLoaded)
+		{
+			Application->MessageBoxW(L"Для импорта зашифрованного сессионного ключа сначала необходимо импортировать открытый ключ удаленного пользователя, с которым будет осуществляться обмен.",L"Ошибка", MB_OK | MB_ICONWARNING);
+			return;
+		}
 		CSP->LoadSessionKey(OpenFileDialog->FileName.c_str());
 		InfoLabel->Caption = "Сессионный ключ успешно импортирован";
 	}

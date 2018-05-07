@@ -64,7 +64,7 @@ public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);
 	myCryptoClass *CSP;
     bool usingImportKey;
-
+    bool isPublicKeyLoaded;
 
 };
 //---------------------------------------------------------------------------

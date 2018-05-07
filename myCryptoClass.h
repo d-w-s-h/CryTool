@@ -35,7 +35,6 @@ class myCryptoClass
 {
 	protected:
 		HCRYPTPROV hProv;        // Дескриптор контекста  критографического провайдера.
-		//HCRYPTKEY hKey;          // Дескриптор открытого/закрытого ключа.
 		DWORD Prov;
 
 		HCRYPTKEY ExchKey ; //      открытый ключ, предназначенный для обмена сессионными ключами

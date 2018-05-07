@@ -1,9 +1,10 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
+  BorderStyle = bsSingle
   Caption = 'CryTool'
-  ClientHeight = 206
-  ClientWidth = 459
+  ClientHeight = 201
+  ClientWidth = 469
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -74,12 +75,12 @@ object MainForm: TMainForm
   end
   object EnPasswordEdit: TEdit
     Left = 202
-    Top = 85
+    Top = 86
     Width = 121
     Height = 21
     PasswordChar = '*'
     TabOrder = 3
-    Text = '111'
+    Text = '12345678'
   end
   object PassConfirmEdit: TEdit
     Left = 202
@@ -88,7 +89,7 @@ object MainForm: TMainForm
     Height = 21
     PasswordChar = '*'
     TabOrder = 4
-    Text = '111'
+    Text = '12345678'
   end
   object DePasswordEdit: TEdit
     Left = 329
@@ -97,7 +98,7 @@ object MainForm: TMainForm
     Height = 21
     PasswordChar = '*'
     TabOrder = 5
-    Text = '111'
+    Text = '12345678'
   end
   object EncryptFileButton: TButton
     Left = 202
