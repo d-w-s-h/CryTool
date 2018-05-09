@@ -2,9 +2,7 @@
 
 #pragma hdrstop
 
-#include "functions.h"
+#include "netClass.h"
 //---------------------------------------------------------------------------
+
 #pragma package(smart_init)
-
-
-

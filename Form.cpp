@@ -98,6 +98,7 @@ void __fastcall TMainForm::DeleteContainerButtonClick(TObject *Sender)
 void __fastcall TMainForm::FormClose(TObject *Sender, TCloseAction &Action)
 {
 	CSP->CleanUp();
+    ServerSocket->Close();
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::GenerateKeyButtonClick(TObject *Sender)
@@ -234,4 +235,133 @@ void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
 
 
 
+
+void __fastcall TMainForm::SendButtonClick(TObject *Sender)
+{
+//	TFileStream *File;
+	if(OpenFileDialog->Execute())
+	{
+
+		File = new TFileStream( OpenFileDialog->FileName, fmOpenRead | fmShareDenyNone );
+		ServerSocket->Socket->Connections[0]->SendText( "file#" + OpenFileDialog->FileName + "#" + IntToStr( File->Size ) + "#" );
+
+//		ServerSocket->Socket->Connections[0]->SendText("#end");
+	}
+
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::ConnectButtonClick(TObject *Sender)
+{
+	ClientSocket->Address = IPEdit->Text;
+	ClientSocket->Active=true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWinSocket *Socket)
+{
+	wstringstream msg;
+
+	msg << L"Клиент " << (ServerSocket->Socket->Connections[0]->RemoteAddress).c_str() << L" запрашивает подключение";
+	int MB = Application->MessageBoxW(msg.str().c_str(), L"Warning", MB_OKCANCEL);
+	if(MB != IDOK)
+	{
+	   ServerSocket->Socket->Connections[0]->Close();
+	   return;
+	}
+	OutputDebugStringA("Client is connected to this server");
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TMainForm::ClientSocketDisconnect(TObject *Sender, TCustomWinSocket *Socket)
+{
+	OutputDebugStringA("You are disconnected");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::ClientSocketConnect(TObject *Sender, TCustomWinSocket *Socket)
+{
+	OutputDebugStringA("You are connected to server");
+}
+//---------------------------------------------------------------------------
+
+
+
+void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *Socket)
+{
+
+	BYTE *buffer;
+
+//  Rtext = ClientSocket->Socket->ReceiveText() ;
+	int nBytesRead =0;
+	nBytesRead = ClientSocket->Socket->ReceiveLength();
+	buffer = new BYTE[nBytesRead] ;
+	ClientSocket->Socket->ReceiveBuf(buffer, nBytesRead );
+	AnsiString Rtext = (char*)buffer;
+
+
+
+	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "file" )
+	{
+		Rtext.Delete( 1 , Rtext.Pos( "#" ) ) ;
+		AnsiString Name = Rtext.SubString( 0 , Rtext.Pos( "#" ) -1 );
+		AnsiString FileName = Name.SubString( Name.LastDelimiter( "\\" ) + 1 , Name.Length() );
+		Rtext.Delete( 1 , Rtext.Pos( "#" ) );
+		FileSize = StrToInt( Rtext.SubString( 0 , Rtext.Pos( "#" ) - 1) ) ;
+		Rtext.Delete( 1 , Rtext.Pos( "#" ) );
+
+		wstringstream msg;
+		msg <<L"Принять от " << (ClientSocket->Socket->RemoteAddress).c_str() << L" файл " << FileName <<" ? ";
+		int MB = Application->MessageBoxW(msg.str().c_str(), L"Warning", MB_OKCANCEL);
+		if(MB != IDOK)
+		{
+			ClientSocket->Socket->SendText( "CANCELfromclient#" );
+			return;
+		}
+		SaveExKeyDialog->FileName = FileName;
+		if(SaveExKeyDialog->Execute())
+		{
+
+			File = new TFileStream( SaveExKeyDialog->FileName, fmCreate | fmOpenReadWrite );//
+			delete(buffer);
+		}
+		ClientSocket->Socket->SendText( "OKfromclient#" );
+		return;
+
+	}
+	else
+	{
+		File->Write(buffer,nBytesRead);
+		if(File->Size >=FileSize)
+		{
+			File->Free();
+        }
+	}
+
+
+
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSocket *Socket)
+{
+	BYTE *buffer;
+	int nBytesRead =0;
+	nBytesRead = ServerSocket->Socket->Connections[0]->ReceiveLength();
+	buffer = new BYTE[nBytesRead] ;
+	ServerSocket->Socket->Connections[0]->ReceiveBuf(buffer, nBytesRead );
+	AnsiString Rtext = (char*)buffer;
+
+	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromclient" )
+	{
+		ServerSocket->Socket->Connections[0]->SendStream(File);
+	}
+
+}
+//---------------------------------------------------------------------------
 

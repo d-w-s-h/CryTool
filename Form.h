@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <Vcl.ComCtrls.hpp>
+#include <System.Win.ScktComp.hpp>
 #ifdef _WIN32
 #   include <windows.h>
 #   include <wincrypt.h>
@@ -48,6 +49,11 @@ __published:	// IDE-managed Components
 	TButton *SessionLoadBtn;
 	TCheckBox *UsingImportKeyCheck;
 	TLabel *InfoLabel;
+	TEdit *IPEdit;
+	TButton *ConnectButton;
+	TButton *SendButton;
+	TClientSocket *ClientSocket;
+	TServerSocket *ServerSocket;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);
@@ -59,12 +65,22 @@ __published:	// IDE-managed Components
 	void __fastcall SessionExBtnClick(TObject *Sender);
 	void __fastcall LoadKeyButtonClick(TObject *Sender);
 	void __fastcall SessionLoadBtnClick(TObject *Sender);
+	void __fastcall SendButtonClick(TObject *Sender);
+	void __fastcall ConnectButtonClick(TObject *Sender);
+	void __fastcall ServerSocketClientConnect(TObject *Sender, TCustomWinSocket *Socket);
+	void __fastcall ClientSocketDisconnect(TObject *Sender, TCustomWinSocket *Socket);
+	void __fastcall ClientSocketConnect(TObject *Sender, TCustomWinSocket *Socket);
+	void __fastcall ClientSocketRead(TObject *Sender, TCustomWinSocket *Socket);
+	void __fastcall ServerSocketClientRead(TObject *Sender, TCustomWinSocket *Socket);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);
 	myCryptoClass *CSP;
     bool usingImportKey;
-    bool isPublicKeyLoaded;
+	bool isPublicKeyLoaded;
+	TFileStream * File;
+	__int64 FileSize;
+
 
 };
 //---------------------------------------------------------------------------

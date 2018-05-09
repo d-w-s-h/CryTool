@@ -17,15 +17,8 @@
 
 
 #include "WinCryptEx.h"
-
-
 #include <sstream>
 #include <fstream>
-
-
-
-
-
 #include <iterator>
 #include <vector>
 using namespace std;
@@ -36,7 +29,6 @@ class myCryptoClass
 	protected:
 		HCRYPTPROV hProv;        // Дескриптор контекста  критографического провайдера.
 		DWORD Prov;
-
 		HCRYPTKEY ExchKey ; //      открытый ключ, предназначенный для обмена сессионными ключами
 		DWORD keyLen;  //длина ключа обмена
 		DWORD BLOCK_LENGTH;
@@ -59,6 +51,7 @@ class myCryptoClass
 		bool CreateExchangeKey();
 		bool LoadExchangeKey(wstring filename);
 		bool ExportExchangeKey(wstring filename);
+
 		bool Encrypt_File(wstring password, wstring filepath, bool usingImportKey);
 		bool Decrypt_File(wstring password, wstring filepath, bool usingImportKey);
 

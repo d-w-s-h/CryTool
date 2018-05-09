@@ -4,7 +4,7 @@ object MainForm: TMainForm
   BorderStyle = bsSingle
   Caption = 'CryTool'
   ClientHeight = 201
-  ClientWidth = 469
+  ClientWidth = 777
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -183,6 +183,32 @@ object MainForm: TMainForm
     TabOrder = 14
     WordWrap = True
   end
+  object IPEdit: TEdit
+    Left = 544
+    Top = 6
+    Width = 154
+    Height = 21
+    TabOrder = 15
+    Text = '192.168.200.50'
+  end
+  object ConnectButton: TButton
+    Left = 544
+    Top = 33
+    Width = 154
+    Height = 21
+    Caption = 'Connect'
+    TabOrder = 16
+    OnClick = ConnectButtonClick
+  end
+  object SendButton: TButton
+    Left = 544
+    Top = 60
+    Width = 154
+    Height = 98
+    Caption = 'Send'
+    TabOrder = 17
+    OnClick = SendButtonClick
+  end
   object OpenFileDialog: TOpenDialog
     Left = 320
     Top = 200
@@ -190,5 +216,24 @@ object MainForm: TMainForm
   object SaveExKeyDialog: TSaveDialog
     Left = 254
     Top = 207
+  end
+  object ClientSocket: TClientSocket
+    Active = False
+    ClientType = ctNonBlocking
+    Port = 29900
+    OnConnect = ClientSocketConnect
+    OnDisconnect = ClientSocketDisconnect
+    OnRead = ClientSocketRead
+    Left = 608
+    Top = 168
+  end
+  object ServerSocket: TServerSocket
+    Active = True
+    Port = 29900
+    ServerType = stNonBlocking
+    OnClientConnect = ServerSocketClientConnect
+    OnClientRead = ServerSocketClientRead
+    Left = 544
+    Top = 168
   end
 end
