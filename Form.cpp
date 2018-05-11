@@ -247,7 +247,7 @@ void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
 	}
 	else
 	{
-        InfoLabel->Caption = "Ошибка импорта сессионного ключа";
+		InfoLabel->Caption = "Ошибка импорта сессионного ключа";
 	}
 }
 //---------------------------------------------------------------------------
@@ -308,7 +308,7 @@ void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWin
 	   return;
 	}
 	OutputDebugStringA("Client is connected to this server");
-	CSP->NetExportPublickKey(ServerSocket->Socket->Connections[0]);
+	CSP->NetExportPublicKey(ServerSocket->Socket->Connections[0]);
 
 
 }
@@ -377,9 +377,21 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 	}
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )
 	{
-//		ServerSocket->Socket->Connections[0]->SendStream(File);
-		CSP->NetImportPublickKey(ClientSocket->Socket, buffer, nBytesRead);
+		if(CSP->NetImportPublicKey(ClientSocket->Socket, buffer, nBytesRead))
+		{
+			InfoLabel->Caption = "Публичный ключ сервера импортирован...";
+			CSP->NetExportPublicKey(ClientSocket->Socket);
+		}
+
 	}
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "SESSIONKEY" )
+	{
+		if(CSP->NetImportSessionKey(ClientSocket->Socket, buffer, nBytesRead))
+		{
+			InfoLabel->Caption = "Установлено защищенное соединение.";
+			ClientSocket->Socket->SendText("CLIENTSESSIONUP#");
+        }
+    }
 	else
 	{
 		File->Write(buffer,nBytesRead);
@@ -434,9 +446,24 @@ void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSoc
 		DownloadProgressBar->Max=FileSize;
 
 	}
-	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromclient" )
+
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromclient" )
 	{
 		ServerSocket->Socket->Connections[0]->SendStream(File);
+	}
+
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )
+	{
+		if(CSP->NetImportPublicKey(ServerSocket->Socket->Connections[0], buffer, nBytesRead))
+		{
+			InfoLabel->Caption = "Публичный ключ клиента импортирован...";
+			CSP->NetExportSessionKey(ServerSocket->Socket->Connections[0]);
+        }
+	}
+
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "CLIENTSESSIONUP" )
+	{
+        InfoLabel->Caption = "Установлено защищенное соединение";
 	}
 
 	else

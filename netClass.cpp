@@ -12,7 +12,7 @@ netClass::netClass(DWORD prov) : myCryptoClass(prov)
 {
 
 }
-bool netClass::NetExportPublickKey(TCustomWinSocket * connection)
+bool netClass::NetExportPublicKey(TCustomWinSocket * connection)
 {
 	wstringstream keyname;
 	if (CreateDirectory(L"TEMP", NULL) ||
@@ -21,42 +21,39 @@ bool netClass::NetExportPublickKey(TCustomWinSocket * connection)
 
 		keyname << L"TEMP\\" << GetmyUserName().c_str() <<".publickey";
 		ExportExchangeKey(keyname.str().c_str());
+		TFileStream *KEY = new TFileStream((UnicodeString) keyname.str().c_str(),  fmOpenReadWrite );//
+		AnsiString header;
+		header =( "PUBLICKEY#" + (UnicodeString)keyname.str().c_str() +  "##" );
+		TMemoryStream *ms = new TMemoryStream();
+		ms->Write(header.c_str(), header.Length());
+
+		BYTE *buffer = new BYTE[KEY->Size];
+		KEY->ReadBuffer(buffer,KEY->Size);
+		ms->WriteBuffer(buffer, KEY->Size);
+		ms->Position=0;
+		connection->SendStream(ms);
+
+		delete(buffer);
+		ms->Clear();
+		KEY->Free();
+
+		DeleteFile( keyname.str().c_str() );
 	}
 	else
 	{
 		 // Failed to create directory.
 	}
-	TFileStream *KEY = new TFileStream((UnicodeString) keyname.str().c_str(),  fmOpenReadWrite );//
-	AnsiString header;
-	header =( "PUBLICKEY#" + (UnicodeString)keyname.str().c_str() +  "##" );
-	TMemoryStream *ms = new TMemoryStream();
-	ms->Write(header.c_str(), header.Length());
-
-	BYTE *buffer = new BYTE[KEY->Size];
-	KEY->ReadBuffer(buffer,KEY->Size);
-	ms->WriteBuffer(buffer, KEY->Size);
-	ms->Position=0;
-	connection->SendStream(ms);
-
-	delete(buffer);
-	ms->Clear();
-	KEY->Free();
-
-	DeleteFile( keyname.str().c_str() );
-
-
-
 
 
 }
 
-bool netClass::NetImportPublickKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead)
+bool netClass::NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead)
 {
 
 	if (CreateDirectory(L"TEMP", NULL) ||
 	ERROR_ALREADY_EXISTS == GetLastError())
 	{
-        AnsiString Rtext = (char*)buffer;
+		AnsiString Rtext = (char*)buffer;
 		int dataoffset = Rtext.Pos( "##" );
 		Rtext.Delete( 1 , Rtext.Pos( "#" ) ) ;
 		AnsiString Name = Rtext.SubString( 0 , Rtext.Pos( "#" ) -1 );
@@ -69,21 +66,113 @@ bool netClass::NetImportPublickKey(TCustomWinSocket * connection, BYTE *buffer, 
 		string sName = Name.c_str();
 		wstring wName;
 		wName = ansi2unicode(sName);
-		LoadExchangeKey(wName);
 
-		DeleteFile( wName.c_str() );
+		if(LoadExchangeKey(wName))
+		{
+			DeleteFile( wName.c_str() );
+			return true;
+		}
+		else
+		{
+			DeleteFile( wName.c_str() );
+			return false;
+		}
 	}
 	else
 	{
-
+		return false;
 	}
 
-
-
-
-
-
 }
+bool netClass::AutoGenerateSessionKey()
+{
+	if(!CryptGenKey(this->hProv,
+					CALG_G28147,
+					CRYPT_EXPORTABLE,
+					&this->EnSessionKey))
+	{
+		return false;
+	}
+	this->DeSessionKey = this->EnSessionKey;
+}
+
+bool netClass::NetExportSessionKey(TCustomWinSocket * connection)
+{
+	wstringstream keyname;
+	if (CreateDirectory(L"TEMP", NULL) ||
+	ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		keyname << L"TEMP\\" << GetmyUserName().c_str() <<".sessionkey";
+
+		if(!this->AutoGenerateSessionKey())
+		{
+			return false;
+		}
+
+		if(!this->ExportSessionKey(keyname.str().c_str()))
+        {
+			return false;
+		}
+
+		TFileStream *KEY = new TFileStream((UnicodeString) keyname.str().c_str(),  fmOpenReadWrite );//
+		AnsiString header;
+		header =( "SESSIONKEY#" + (UnicodeString)keyname.str().c_str() +  "##" );
+		TMemoryStream *ms = new TMemoryStream();
+		ms->Write(header.c_str(), header.Length());
+		BYTE *buffer = new BYTE[KEY->Size];
+		KEY->ReadBuffer(buffer,KEY->Size);
+		ms->WriteBuffer(buffer, KEY->Size);
+		ms->Position=0;
+		connection->SendStream(ms);
+		delete(buffer);
+		ms->Clear();
+		KEY->Free();
+		DeleteFile( keyname.str().c_str() );
+	}
+	else
+	{
+         return false;
+		 // Failed to create directory.
+	}
+}
+
+
+bool netClass::NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead)
+{
+    if (CreateDirectory(L"TEMP", NULL) ||
+	ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		AnsiString Rtext = (char*)buffer;
+		int dataoffset = Rtext.Pos( "##" );
+		Rtext.Delete( 1 , Rtext.Pos( "#" ) ) ;
+		AnsiString Name = Rtext.SubString( 0 , Rtext.Pos( "#" ) -1 );
+		AnsiString FileName = Name.SubString( Name.LastDelimiter( "\\" ) + 1 , Name.Length() );
+		Rtext.Delete( 1 , Rtext.Pos( "#" ) );
+		TFileStream *KEY = new TFileStream(Name, fmCreate | fmOpenRead );
+		KEY->WriteBuffer(buffer+dataoffset+1,nBytesRead - dataoffset-1);
+		KEY->Free();
+
+		string sName = Name.c_str();
+		wstring wName;
+		wName = ansi2unicode(sName);
+
+		if(this->LoadSessionKey(wName))
+		{
+			DeleteFile( wName.c_str() );
+			return true;
+		}
+		else
+		{
+			DeleteFile( wName.c_str() );
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
 
 std::wstring netClass::ansi2unicode(const std::string &str)
 {

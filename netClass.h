@@ -20,9 +20,12 @@ class netClass : public myCryptoClass
 		wstring ansi2unicode(const std::string &str);
 	public:
 		netClass(DWORD prov);
-		bool AutogenerateSessionKey();
-		bool NetExportPublickKey(TCustomWinSocket * connection);
-		bool NetImportPublickKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead);
+		bool AutoGenerateSessionKey();
+		bool NetExportPublicKey(TCustomWinSocket * connection);
+		bool NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead);
+
+		bool NetExportSessionKey(TCustomWinSocket * connection);
+		bool NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead);
 
 
 

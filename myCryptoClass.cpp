@@ -253,12 +253,12 @@ bool myCryptoClass::LoadExchangeKey(wstring filename)
 					FILE_ATTRIBUTE_NORMAL,
 					NULL);
 	if (hInKeyFile == INVALID_HANDLE_VALUE) return false;
-
+	DWORD nOfRead = 0;
 	if(ReadFile(
 					hInKeyFile,
 					pbKeyBlobExternal,
 					dwBlobLen,
-					NULL,
+					&nOfRead,
 					NULL))
 	{
 		OutputDebugStringA("PUBLICKKEY is read \n");
@@ -550,11 +550,12 @@ bool myCryptoClass::ExportSessionKey(wstring filename)
 					FILE_ATTRIBUTE_NORMAL,
 					NULL);
 	if (hOutKeyFile == INVALID_HANDLE_VALUE) return false;
+	DWORD written = 0;
 	bool result = WriteFile(
 					hOutKeyFile,
 					blobbuffer,
 					bufflen,
-					NULL,
+					&written,
 					NULL);
 	if (result == true)
 	{
@@ -590,11 +591,12 @@ bool myCryptoClass::LoadSessionKey(wstring filename)
 
 	BYTE *blobbuffer = new BYTE[dwBlobLenSimple];
 
+	DWORD nOfRead =0;
 	bool result = ReadFile(
 					hInKeyFile,
 					blobbuffer,
 					dwBlobLenSimple,
-					NULL,
+					&nOfRead,
 					NULL);
 
 	if (result == true)
