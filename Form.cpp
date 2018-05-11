@@ -24,14 +24,17 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 //	CSP = new myCryptoClass( PROV_GOST_2001_DH);
 	CSP = new netClass(PROV_GOST_2001_DH);
 	MainForm->UsernameEdit->Text = (UnicodeString) CSP->GetmyUserName().c_str();
-	bool CreateContainer();
+//	bool CreateContainer();
+	CSP->CreateContainer(MainForm->UsernameEdit->Text.c_str());
+
 	EncryptFileButton->Enabled =false;
 	DecryptFileButton->Enabled =false;
 	ExportKeyButton->Enabled =false;
-	GenerateKeyButton->Enabled =false;
 	LoadKeyButton->Enabled =false;
 	SessionExBtn->Enabled = false;
 	SessionLoadBtn->Enabled = false;
+	DisconnectButton->Enabled = false;
+
 
 	this->usingImportKey=false;
 	this->isPublicKeyLoaded=false;
@@ -43,48 +46,7 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 		EncryptFileButton->Enabled =true;
 		DecryptFileButton->Enabled =true;
 		ExportKeyButton->Enabled =true;
-		GenerateKeyButton->Enabled =true;
-		LoadKeyButton->Enabled  =true;
-		SessionLoadBtn->Enabled = true;
-		InfoLabel->Caption = "Контейнер был успешно загружен";
-	}
-	else
-	{
-		InfoLabel->Caption = "Ошибка загрузки конейнера (либо контейнер был загружен ранее)";
-	}
 
-
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
-{
-	if(CSP->CreateContainer(MainForm->UsernameEdit->Text.c_str()))
-	{
-		EncryptFileButton->Enabled =true;
-		DecryptFileButton->Enabled =true;
-		ExportKeyButton->Enabled =true;
-		GenerateKeyButton->Enabled =true;
-		LoadKeyButton->Enabled  =true;
-		SessionLoadBtn->Enabled = true;
-		stringstream msg;
-		msg << "Контейнер " << CSP->GetmyUserName().c_str() <<  " создан";
-
-		InfoLabel->Caption = msg.str().c_str();
-	}
-	else
-	{
-		InfoLabel->Caption = "Ошибка создания конейнера (либо контейнер был создан ранее - попробуйте загрузить его)";
-	}
-}
-//---------------------------------------------------------------------------
-void __fastcall TMainForm::LoadContainerButtonClick(TObject *Sender)
-{
-	if(CSP->LoadContainer(MainForm->UsernameEdit->Text.c_str()))
-	{
-		EncryptFileButton->Enabled =true;
-		DecryptFileButton->Enabled =true;
-		ExportKeyButton->Enabled =true;
-		GenerateKeyButton->Enabled =true;
 		LoadKeyButton->Enabled  =true;
 		SessionLoadBtn->Enabled = true;
 		InfoLabel->Caption = "Контейнер был успешно загружен";
@@ -95,17 +57,10 @@ void __fastcall TMainForm::LoadContainerButtonClick(TObject *Sender)
 	}
 }
 //---------------------------------------------------------------------------
-void __fastcall TMainForm::DeleteContainerButtonClick(TObject *Sender)
+void __fastcall TMainForm::UpdateContainerButtonClick(TObject *Sender)
 {
 	if(CSP->DeleteContainer(MainForm->UsernameEdit->Text.c_str()))
 	{
-		EncryptFileButton->Enabled =false;
-		DecryptFileButton->Enabled =false;
-		ExportKeyButton->Enabled =false;
-		GenerateKeyButton->Enabled =false;
-		LoadKeyButton->Enabled =false;
-		SessionExBtn->Enabled = false;
-		SessionLoadBtn->Enabled = false;
 		InfoLabel->Caption = "Контейнер был успешно удален";
 		this->isPublicKeyLoaded=false;
 	}
@@ -113,6 +68,41 @@ void __fastcall TMainForm::DeleteContainerButtonClick(TObject *Sender)
 	{
 		InfoLabel->Caption = "Контейнер не был удален (либо удален ранее)";
 	}
+	if(CSP->CreateContainer(MainForm->UsernameEdit->Text.c_str()))
+	{
+		stringstream msg;
+		msg << "Контейнер " << CSP->GetmyUserName().c_str() <<  " создан";
+		InfoLabel->Caption = msg.str().c_str();
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка создания конейнера (либо контейнер был создан ранее - попробуйте загрузить его)";
+	}
+	if(CSP->CreateExchangeKey())
+	{
+//		SessionExBtn->Enabled = true;
+		InfoLabel->Caption = "Пара ключей сгенерирована";
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка генерации ключей (либо ключи уже был сгенерированы ранее)";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainForm::UsingImportKeyCheckClick(TObject *Sender)
+{
+	if(UsingImportKeyCheck->Checked)
+	{
+		EnPasswordEdit->Enabled=false;
+		DePasswordEdit->Enabled=false;
+		PassConfirmEdit->Enabled=false;
+	}
+	else
+	{
+		EnPasswordEdit->Enabled=true;
+		DePasswordEdit->Enabled=true;
+		PassConfirmEdit->Enabled=true;
+    }
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::FormClose(TObject *Sender, TCloseAction &Action)
@@ -293,6 +283,8 @@ void __fastcall TMainForm::ConnectButtonClick(TObject *Sender)
 {
 	ClientSocket->Address = IPEdit->Text;
 	ClientSocket->Active=true;
+	ConnectButton->Enabled = false;
+	DisconnectButton->Enabled = true;
 }
 //---------------------------------------------------------------------------
 
@@ -309,6 +301,8 @@ void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWin
 	}
 	OutputDebugStringA("Client is connected to this server");
 	CSP->NetExportPublicKey(ServerSocket->Socket->Connections[0]);
+	ConnectButton->Enabled = false;
+	DisconnectButton->Enabled = true;
 
 
 }
@@ -319,6 +313,17 @@ void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWin
 void __fastcall TMainForm::ClientSocketDisconnect(TObject *Sender, TCustomWinSocket *Socket)
 {
 	OutputDebugStringA("You are disconnected");
+	InfoLabel->Caption = "Соединение разорвано.";
+	ConnectButton->Enabled = true;
+	DisconnectButton->Enabled = false;
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainForm::ServerSocketClientDisconnect(TObject *Sender, TCustomWinSocket *Socket)
+{
+	OutputDebugStringA("You are disconnected");
+	InfoLabel->Caption = "Соединение разорвано.";
+	ConnectButton->Enabled = true;
+	DisconnectButton->Enabled = false;
 }
 //---------------------------------------------------------------------------
 
@@ -497,4 +502,29 @@ void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSoc
 
 }
 //---------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------
+
+
+
+
+
+void __fastcall TMainForm::DisconnectButtonClick(TObject *Sender)
+{
+	if(ClientSocket->Socket->Connected)
+	{
+		ClientSocket->Socket->Close();
+	}
+	else if(ServerSocket->Socket->ActiveConnections != 0)
+	{
+		ServerSocket->Socket->Connections[0]->Close();
+	}
+	else
+	{
+		Application->MessageBoxW(L"Нет активных соединений",L"Ошибка", MB_OK | MB_ICONWARNING);
+	}
+}
+//---------------------------------------------------------------------------
+
 

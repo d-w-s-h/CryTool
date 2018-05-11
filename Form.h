@@ -30,35 +30,31 @@
 class TMainForm : public TForm
 {
 __published:	// IDE-managed Components
-	TButton *LoadKeyButton;
-	TButton *GenerateKeyButton;
-	TButton *ExportKeyButton;
-	TEdit *EnPasswordEdit;
-	TEdit *PassConfirmEdit;
-	TEdit *DePasswordEdit;
-	TButton *EncryptFileButton;
-	TButton *DecryptFileButton;
-	TButton *CreateContainerButton;
-	TButton *LoadContainerButton;
-	TButton *DeleteContainerButton;
 	TOpenDialog *OpenFileDialog;
 	TSaveDialog *SaveExKeyDialog;
 	TEdit *UsernameEdit;
-	TLabel *Label1;
-	TLabel *Label2;
+	TLabel *InfoLabel;
+	TClientSocket *ClientSocket;
+	TServerSocket *ServerSocket;
+	TButton *UpdateContainerButton;
+	TPageControl *PageControl1;
+	TTabSheet *TabSheet1;
+	TTabSheet *TabSheet2;
+	TButton *EncryptFileButton;
+	TEdit *EnPasswordEdit;
+	TEdit *PassConfirmEdit;
 	TButton *SessionExBtn;
 	TButton *SessionLoadBtn;
 	TCheckBox *UsingImportKeyCheck;
-	TLabel *InfoLabel;
-	TEdit *IPEdit;
+	TEdit *DePasswordEdit;
+	TButton *DecryptFileButton;
 	TButton *ConnectButton;
+	TEdit *IPEdit;
 	TButton *SendButton;
-	TClientSocket *ClientSocket;
-	TServerSocket *ServerSocket;
 	TProgressBar *DownloadProgressBar;
-	void __fastcall CreateContainerButtonClick(TObject *Sender);
-	void __fastcall LoadContainerButtonClick(TObject *Sender);
-	void __fastcall DeleteContainerButtonClick(TObject *Sender);
+	TButton *ExportKeyButton;
+	TButton *LoadKeyButton;
+	TButton *DisconnectButton;
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall GenerateKeyButtonClick(TObject *Sender);
 	void __fastcall ExportKeyButtonClick(TObject *Sender);
@@ -74,6 +70,10 @@ __published:	// IDE-managed Components
 	void __fastcall ClientSocketConnect(TObject *Sender, TCustomWinSocket *Socket);
 	void __fastcall ClientSocketRead(TObject *Sender, TCustomWinSocket *Socket);
 	void __fastcall ServerSocketClientRead(TObject *Sender, TCustomWinSocket *Socket);
+	void __fastcall UpdateContainerButtonClick(TObject *Sender);
+	void __fastcall UsingImportKeyCheckClick(TObject *Sender);
+	void __fastcall DisconnectButtonClick(TObject *Sender);
+	void __fastcall ServerSocketClientDisconnect(TObject *Sender, TCustomWinSocket *Socket);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

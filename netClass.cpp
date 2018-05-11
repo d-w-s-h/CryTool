@@ -42,6 +42,7 @@ bool netClass::NetExportPublicKey(TCustomWinSocket * connection)
 	else
 	{
 		 // Failed to create directory.
+		 return false;
 	}
 
 

@@ -3,8 +3,8 @@ object MainForm: TMainForm
   Top = 0
   BorderStyle = bsSingle
   Caption = 'CryTool'
-  ClientHeight = 201
-  ClientWidth = 777
+  ClientHeight = 367
+  ClientWidth = 281
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,27 +12,14 @@ object MainForm: TMainForm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesigned
   OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 8
-    Top = 42
-    Width = 55
-    Height = 13
-    Caption = #1050#1086#1085#1090#1077#1081#1085#1077#1088
-  end
-  object Label2: TLabel
-    Left = 105
-    Top = 42
-    Width = 73
-    Height = 13
-    Caption = #1050#1083#1102#1095#1080' '#1086#1073#1084#1077#1085#1072
-  end
   object InfoLabel: TLabel
     Left = 8
-    Top = 187
-    Width = 3
+    Top = 345
+    Width = 173
     Height = 13
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clFuchsia
@@ -41,188 +28,187 @@ object MainForm: TMainForm
     Font.Style = []
     ParentFont = False
   end
-  object LoadKeyButton: TButton
-    Left = 105
-    Top = 60
-    Width = 91
-    Height = 41
-    Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
-    TabOrder = 0
-    WordWrap = True
-    OnClick = LoadKeyButtonClick
-  end
-  object GenerateKeyButton: TButton
-    Left = 105
-    Top = 102
-    Width = 91
-    Height = 42
-    Caption = #1043#1077#1085#1077#1088#1080#1088#1086#1074#1072#1090#1100' '#1082#1083#1102#1095#1077#1074#1091#1102' '#1087#1072#1088#1091
-    ParentShowHint = False
-    ShowHint = False
-    TabOrder = 1
-    WordWrap = True
-    OnClick = GenerateKeyButtonClick
-  end
-  object ExportKeyButton: TButton
-    Left = 105
-    Top = 145
-    Width = 91
-    Height = 36
-    Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
-    TabOrder = 2
-    WordWrap = True
-    OnClick = ExportKeyButtonClick
-  end
-  object EnPasswordEdit: TEdit
-    Left = 202
-    Top = 86
-    Width = 121
-    Height = 21
-    PasswordChar = '*'
-    TabOrder = 3
-    Text = '12345678'
-  end
-  object PassConfirmEdit: TEdit
-    Left = 202
-    Top = 112
-    Width = 121
-    Height = 21
-    PasswordChar = '*'
-    TabOrder = 4
-    Text = '12345678'
-  end
-  object DePasswordEdit: TEdit
-    Left = 329
-    Top = 85
-    Width = 121
-    Height = 21
-    PasswordChar = '*'
-    TabOrder = 5
-    Text = '12345678'
-  end
-  object EncryptFileButton: TButton
-    Left = 202
-    Top = 8
-    Width = 121
-    Height = 71
-    Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
-    TabOrder = 6
-    OnClick = EncryptFileButtonClick
-  end
-  object DecryptFileButton: TButton
-    Left = 329
-    Top = 9
-    Width = 121
-    Height = 71
-    Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
-    TabOrder = 7
-    OnClick = DecryptFileButtonClick
-  end
-  object CreateContainerButton: TButton
-    Left = 8
-    Top = 60
-    Width = 91
-    Height = 41
-    Caption = #1057#1086#1079#1076#1072#1090#1100
-    TabOrder = 8
-    OnClick = CreateContainerButtonClick
-  end
-  object LoadContainerButton: TButton
-    Left = 8
-    Top = 102
-    Width = 91
-    Height = 42
-    Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
-    TabOrder = 9
-    OnClick = LoadContainerButtonClick
-  end
-  object DeleteContainerButton: TButton
-    Left = 8
-    Top = 145
-    Width = 91
-    Height = 36
-    Caption = #1059#1076#1072#1083#1080#1090#1100
-    TabOrder = 10
-    OnClick = DeleteContainerButtonClick
-  end
   object UsernameEdit: TEdit
     Left = 8
-    Top = 8
-    Width = 188
+    Top = 13
+    Width = 261
     Height = 21
-    TabOrder = 11
+    TabOrder = 0
     Text = 'UsernameEdit'
   end
-  object SessionExBtn: TButton
-    Left = 202
-    Top = 139
-    Width = 121
-    Height = 42
-    Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
-    Enabled = False
-    TabOrder = 12
+  object UpdateContainerButton: TButton
+    Left = 8
+    Top = 40
+    Width = 261
+    Height = 33
+    Caption = #1054#1073#1085#1086#1074#1080#1090#1100' '#1082#1086#1085#1090#1077#1081#1085#1077#1088' '#1080' '#1082#1083#1102#1095#1080
+    TabOrder = 1
     WordWrap = True
-    OnClick = SessionExBtnClick
+    OnClick = UpdateContainerButtonClick
   end
-  object SessionLoadBtn: TButton
-    Left = 329
-    Top = 139
-    Width = 121
-    Height = 42
-    Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
-    TabOrder = 13
-    WordWrap = True
-    OnClick = SessionLoadBtnClick
-  end
-  object UsingImportKeyCheck: TCheckBox
-    Left = 329
-    Top = 112
-    Width = 121
-    Height = 21
-    Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1082#1083#1102#1095
-    TabOrder = 14
-    WordWrap = True
-  end
-  object IPEdit: TEdit
-    Left = 544
-    Top = 6
-    Width = 154
-    Height = 21
-    TabOrder = 15
-    Text = '192.168.200.50'
-  end
-  object ConnectButton: TButton
-    Left = 544
-    Top = 33
-    Width = 154
-    Height = 21
-    Caption = 'Connect'
-    TabOrder = 16
-    OnClick = ConnectButtonClick
-  end
-  object SendButton: TButton
-    Left = 544
-    Top = 60
-    Width = 154
-    Height = 98
-    Caption = 'Send'
-    TabOrder = 17
-    OnClick = SendButtonClick
-  end
-  object DownloadProgressBar: TProgressBar
-    Left = 544
-    Top = 164
-    Width = 150
-    Height = 17
-    TabOrder = 18
+  object PageControl1: TPageControl
+    Left = 8
+    Top = 79
+    Width = 265
+    Height = 260
+    ActivePage = TabSheet2
+    MultiLine = True
+    TabOrder = 2
+    object TabSheet1: TTabSheet
+      Caption = #1056#1072#1073#1086#1090#1072' '#1089' '#1092#1072#1081#1083#1072#1084#1080
+      ExplicitWidth = 279
+      object EncryptFileButton: TButton
+        Left = 3
+        Top = -1
+        Width = 121
+        Height = 71
+        Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
+        TabOrder = 0
+        OnClick = EncryptFileButtonClick
+      end
+      object EnPasswordEdit: TEdit
+        Left = 3
+        Top = 77
+        Width = 121
+        Height = 21
+        PasswordChar = '*'
+        TabOrder = 1
+        Text = '12345678'
+      end
+      object PassConfirmEdit: TEdit
+        Left = 3
+        Top = 103
+        Width = 121
+        Height = 21
+        PasswordChar = '*'
+        TabOrder = 2
+        Text = '12345678'
+      end
+      object SessionExBtn: TButton
+        Left = 3
+        Top = 130
+        Width = 121
+        Height = 42
+        Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
+        Enabled = False
+        TabOrder = 3
+        WordWrap = True
+        OnClick = SessionExBtnClick
+      end
+      object SessionLoadBtn: TButton
+        Left = 130
+        Top = 130
+        Width = 119
+        Height = 42
+        Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
+        TabOrder = 4
+        WordWrap = True
+        OnClick = SessionLoadBtnClick
+      end
+      object UsingImportKeyCheck: TCheckBox
+        Left = 130
+        Top = 103
+        Width = 121
+        Height = 21
+        Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1082#1083#1102#1095
+        TabOrder = 5
+        WordWrap = True
+        OnClick = UsingImportKeyCheckClick
+      end
+      object DePasswordEdit: TEdit
+        Left = 130
+        Top = 76
+        Width = 119
+        Height = 21
+        PasswordChar = '*'
+        TabOrder = 6
+        Text = '12345678'
+      end
+      object DecryptFileButton: TButton
+        Left = 130
+        Top = -1
+        Width = 121
+        Height = 71
+        Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
+        TabOrder = 7
+        OnClick = DecryptFileButtonClick
+      end
+      object ExportKeyButton: TButton
+        Left = 3
+        Top = 178
+        Width = 121
+        Height = 36
+        Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
+        TabOrder = 8
+        WordWrap = True
+        OnClick = ExportKeyButtonClick
+      end
+      object LoadKeyButton: TButton
+        Left = 130
+        Top = 178
+        Width = 119
+        Height = 36
+        Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
+        TabOrder = 9
+        WordWrap = True
+        OnClick = LoadKeyButtonClick
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = #1059#1076#1072#1083#1077#1085#1085#1086#1077' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077
+      ImageIndex = 1
+      ExplicitWidth = 279
+      object ConnectButton: TButton
+        Left = 3
+        Top = 32
+        Width = 126
+        Height = 21
+        Caption = 'Connect'
+        TabOrder = 0
+        OnClick = ConnectButtonClick
+      end
+      object IPEdit: TEdit
+        Left = 4
+        Top = 5
+        Width = 245
+        Height = 21
+        TabOrder = 1
+        Text = '192.168.200.50'
+      end
+      object SendButton: TButton
+        Left = 3
+        Top = 57
+        Width = 246
+        Height = 85
+        Caption = 'Send'
+        TabOrder = 2
+        OnClick = SendButtonClick
+      end
+      object DownloadProgressBar: TProgressBar
+        Left = 3
+        Top = 148
+        Width = 246
+        Height = 13
+        TabOrder = 3
+      end
+      object DisconnectButton: TButton
+        Left = 129
+        Top = 32
+        Width = 120
+        Height = 21
+        Caption = 'Disconnect'
+        TabOrder = 4
+        OnClick = DisconnectButtonClick
+      end
+    end
   end
   object OpenFileDialog: TOpenDialog
-    Left = 320
-    Top = 200
+    Left = 168
+    Top = 400
   end
   object SaveExKeyDialog: TSaveDialog
-    Left = 254
-    Top = 207
+    Left = 110
+    Top = 391
   end
   object ClientSocket: TClientSocket
     Active = False
@@ -231,16 +217,17 @@ object MainForm: TMainForm
     OnConnect = ClientSocketConnect
     OnDisconnect = ClientSocketDisconnect
     OnRead = ClientSocketRead
-    Left = 712
-    Top = 136
+    Left = 24
+    Top = 296
   end
   object ServerSocket: TServerSocket
     Active = True
     Port = 29900
     ServerType = stNonBlocking
     OnClientConnect = ServerSocketClientConnect
+    OnClientDisconnect = ServerSocketClientDisconnect
     OnClientRead = ServerSocketClientRead
-    Left = 712
-    Top = 80
+    Left = 128
+    Top = 280
   end
 end
