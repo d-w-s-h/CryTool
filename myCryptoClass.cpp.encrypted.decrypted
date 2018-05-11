@@ -9,7 +9,7 @@
 myCryptoClass::myCryptoClass(DWORD prov)
 {
 	this->Prov = prov;
-	this->hProv = 0;        // Дескриптор контекста  критографического провайдера.
+	this->hProv = 0;        // Г„ГҐГ±ГЄГ°ГЁГЇГІГ®Г° ГЄГ®Г­ГІГҐГЄГ±ГІГ   ГЄГ°ГЁГІГ®ГЈГ°Г ГґГЁГ·ГҐГ±ГЄГ®ГЈГ® ГЇГ°Г®ГўГ Г©Г¤ГҐГ°Г .
 	this->ExchKey = 0;
 	this->keyLen =0;
 	this->BLOCK_LENGTH =  1024;
@@ -20,17 +20,17 @@ myCryptoClass::myCryptoClass(DWORD prov)
 
 bool myCryptoClass::CreateContainer(wstring userName)
 {
-	// Объявление и инициализация переменных.
-	LPSTR pszUserName;		  // Буфер для хранения имени  ключевого контейнера.
-	DWORD dwUserNameLen;	  // Длина буфера.
-	LPCWSTR UserName;	          // Добавленное по выбору имя пользователя
-					  // здесь будет использовано как имя
-				  // ключевого контейнера (ограничение на 100 символов).
+	// ГЋГЎГєГїГўГ«ГҐГ­ГЁГҐ ГЁ ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»Гµ.
+	LPSTR pszUserName;		  // ГЃГіГґГҐГ° Г¤Г«Гї ГµГ°Г Г­ГҐГ­ГЁГї ГЁГ¬ГҐГ­ГЁ  ГЄГ«ГѕГ·ГҐГўГ®ГЈГ® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г .
+	DWORD dwUserNameLen;	  // Г„Г«ГЁГ­Г  ГЎГіГґГҐГ°Г .
+	LPCWSTR UserName;	          // Г„Г®ГЎГ ГўГ«ГҐГ­Г­Г®ГҐ ГЇГ® ГўГ»ГЎГ®Г°Гі ГЁГ¬Гї ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гї
+					  // Г§Г¤ГҐГ±Гј ГЎГіГ¤ГҐГІ ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­Г® ГЄГ ГЄ ГЁГ¬Гї
+				  // ГЄГ«ГѕГ·ГҐГўГ®ГЈГ® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г  (Г®ГЈГ°Г Г­ГЁГ·ГҐГ­ГЁГҐ Г­Г  100 Г±ГЁГ¬ГўГ®Г«Г®Гў).
 
 	UserName = userName.c_str();
-	//  Для создания нового ключевого контейнера строка второго параметра
-	//  заменяется на NULL здесь :
-	// Создание нового контейнера.
+	//  Г„Г«Гї Г±Г®Г§Г¤Г Г­ГЁГї Г­Г®ГўГ®ГЈГ® ГЄГ«ГѕГ·ГҐГўГ®ГЈГ® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г  Г±ГІГ°Г®ГЄГ  ГўГІГ®Г°Г®ГЈГ® ГЇГ Г°Г Г¬ГҐГІГ°Г 
+	//  Г§Г Г¬ГҐГ­ГїГҐГІГ±Гї Г­Г  NULL Г§Г¤ГҐГ±Гј :
+	// Г‘Г®Г§Г¤Г Г­ГЁГҐ Г­Г®ГўГ®ГЈГ® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г .
 	if(!CryptAcquireContextW(
 					&this->hProv,
 					UserName,
@@ -51,16 +51,16 @@ bool myCryptoClass::CreateContainer(wstring userName)
 }
 bool myCryptoClass::LoadContainer(wstring userName)
 {
-	LPSTR pszUserName;		  // Буфер для хранения имени  ключевого контейнера.
-	DWORD dwUserNameLen;	  // Длина буфера.
-	LPCWSTR UserName;	          // Добавленное по выбору имя пользователя
+	LPSTR pszUserName;		  // ГЃГіГґГҐГ° Г¤Г«Гї ГµГ°Г Г­ГҐГ­ГЁГї ГЁГ¬ГҐГ­ГЁ  ГЄГ«ГѕГ·ГҐГўГ®ГЈГ® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г .
+	DWORD dwUserNameLen;	  // Г„Г«ГЁГ­Г  ГЎГіГґГҐГ°Г .
+	LPCWSTR UserName;	          // Г„Г®ГЎГ ГўГ«ГҐГ­Г­Г®ГҐ ГЇГ® ГўГ»ГЎГ®Г°Гі ГЁГ¬Гї ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гї
 	UserName = userName.c_str();
 	if(CryptAcquireContext(
-					&this->hProv,               // Дескриптор CSP
-					UserName,                  // Имя контейнера
-					NULL,                      // Использование провайдера по умолчанию
-					this->Prov,	   // Тип провайдера
-					0))                        // Значения флагов
+					&this->hProv,               // Г„ГҐГ±ГЄГ°ГЁГЇГІГ®Г° CSP
+					UserName,                  // Г€Г¬Гї ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г 
+					NULL,                      // Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ ГЇГ°Г®ГўГ Г©Г¤ГҐГ°Г  ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ
+					this->Prov,	   // Г’ГЁГЇ ГЇГ°Г®ГўГ Г©Г¤ГҐГ°Г 
+					0))                        // Г‡Г­Г Г·ГҐГ­ГЁГї ГґГ«Г ГЈГ®Гў
 	{
 		wstringstream deb;
 		deb << "A cryptcontext with the " << UserName << " key container has been acquired.\n" ;
@@ -75,16 +75,16 @@ bool myCryptoClass::LoadContainer(wstring userName)
 }
 bool myCryptoClass::DeleteContainer(wstring userName)
 {
-	LPSTR pszUserName;		  // Буфер для хранения имени  ключевого контейнера.
-	DWORD dwUserNameLen;	  // Длина буфера.
-	LPCWSTR UserName;	          // Добавленное по выбору имя пользователя
+	LPSTR pszUserName;		  // ГЃГіГґГҐГ° Г¤Г«Гї ГµГ°Г Г­ГҐГ­ГЁГї ГЁГ¬ГҐГ­ГЁ  ГЄГ«ГѕГ·ГҐГўГ®ГЈГ® ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г .
+	DWORD dwUserNameLen;	  // Г„Г«ГЁГ­Г  ГЎГіГґГҐГ°Г .
+	LPCWSTR UserName;	          // Г„Г®ГЎГ ГўГ«ГҐГ­Г­Г®ГҐ ГЇГ® ГўГ»ГЎГ®Г°Гі ГЁГ¬Гї ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гї
 	UserName = userName.c_str();
 	if(CryptAcquireContext(
-					&this->hProv,               // Дескриптор CSP
-					UserName,                  // Имя контейнера
-					NULL,                      // Использование провайдера по умолчанию
-					this->Prov,	   // Тип провайдера
-					CRYPT_DELETEKEYSET))         // Значения флагов
+					&this->hProv,               // Г„ГҐГ±ГЄГ°ГЁГЇГІГ®Г° CSP
+					UserName,                  // Г€Г¬Гї ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г 
+					NULL,                      // Г€Г±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐ ГЇГ°Г®ГўГ Г©Г¤ГҐГ°Г  ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ
+					this->Prov,	   // Г’ГЁГЇ ГЇГ°Г®ГўГ Г©Г¤ГҐГ°Г 
+					CRYPT_DELETEKEYSET))         // Г‡Г­Г Г·ГҐГ­ГЁГї ГґГ«Г ГЈГ®Гў
 	{
 		wstringstream deb;
 		deb << "Container " << UserName << " is deleted !\n" ;
@@ -101,17 +101,17 @@ bool myCryptoClass::DeleteContainer(wstring userName)
 
 bool myCryptoClass::CreateExchangeKey()
 {
-	// попытка получения дескриптора открытого ключа обмена
+	// ГЇГ®ГЇГ»ГІГЄГ  ГЇГ®Г«ГіГ·ГҐГ­ГЁГї Г¤ГҐГ±ГЄГ°ГЁГЇГІГ®Г°Г  Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г  Г®ГЎГ¬ГҐГ­Г 
 	if(CryptGetUserKey(
-					hProv,                     // Дескриптор CSP
-					AT_KEYEXCHANGE,                   // Спецификация ключа
-					&ExchKey))                         // Дескриптор ключа
+					hProv,                     // Г„ГҐГ±ГЄГ°ГЁГЇГІГ®Г° CSP
+					AT_KEYEXCHANGE,                   // Г‘ГЇГҐГ¶ГЁГґГЁГЄГ Г¶ГЁГї ГЄГ«ГѕГ·Г 
+					&ExchKey))                         // Г„ГҐГ±ГЄГ°ГЁГЇГІГ®Г° ГЄГ«ГѕГ·Г 
 	{
 		OutputDebugStringA("A exchange key is already available.\n");
 		return false;
 	}
 
-	// генерирование пары ключей (где ExchKey - открытый ключ)
+	// ГЈГҐГ­ГҐГ°ГЁГ°Г®ГўГ Г­ГЁГҐ ГЇГ Г°Г» ГЄГ«ГѕГ·ГҐГ© (ГЈГ¤ГҐ ExchKey - Г®ГІГЄГ°Г»ГІГ»Г© ГЄГ«ГѕГ·)
 
 	if(!CryptGenKey(
 					hProv,
@@ -125,7 +125,7 @@ bool myCryptoClass::CreateExchangeKey()
 	}
 	else OutputDebugStringA("Created a exchange key.\n");
 
-	//следует запросить длину созданного ключа
+	//Г±Г«ГҐГ¤ГіГҐГІ Г§Г ГЇГ°Г®Г±ГЁГІГј Г¤Г«ГЁГ­Гі Г±Г®Г§Г¤Г Г­Г­Г®ГЈГ® ГЄГ«ГѕГ·Г 
 	BYTE *pSizeData= new BYTE(4);
 	DWORD sizeofkeysize = 4;
 
@@ -149,11 +149,10 @@ bool myCryptoClass::CreateExchangeKey()
 bool myCryptoClass::ExportExchangeKey(wstring filename)
 {
 	 DWORD dwBlobLen;
-	 //Получение дескриптора открытого ключа (если уже есть) или создание нового
+	 //ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ Г¤ГҐГ±ГЄГ°ГЁГЇГІГ®Г°Г  Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г  (ГҐГ±Г«ГЁ ГіГ¦ГҐ ГҐГ±ГІГј) ГЁГ«ГЁ Г±Г®Г§Г¤Г Г­ГЁГҐ Г­Г®ГўГ®ГЈГ®
 	 CreateExchangeKey();
-	 //Определение размера BLOBа открытого ключа и распределение памяти
-
-	if(CryptExportKey(
+	 //ГЋГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ Г°Г Г§Г¬ГҐГ°Г  BLOBГ  Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г  ГЁ Г°Г Г±ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ ГЇГ Г¬ГїГІГЁ
+	 if(CryptExportKey(
 					ExchKey,
 					0,
 					PUBLICKEYBLOB,
@@ -170,11 +169,9 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 		return false;
 	}
 
-
-
-	pbKeyBlobInternal = new BYTE[dwBlobLen];
-	//Экспортирование открытого ключа получателя в BLOB открытого ключа
-	if(CryptExportKey(
+	pbKeyBlobInternal = (BYTE*)malloc(dwBlobLen);
+	//ГќГЄГ±ГЇГ®Г°ГІГЁГ°Г®ГўГ Г­ГЁГҐ Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г  ГЇГ®Г«ГіГ·Г ГІГҐГ«Гї Гў BLOB Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г 
+    if(CryptExportKey(
 					ExchKey,
 					0,
 					PUBLICKEYBLOB,
@@ -193,19 +190,18 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 
 	HANDLE hOutKeyFile = CreateFileW(
 					filename.c_str(),
-					GENERIC_WRITE,
-					0,
+					GENERIC_READ | GENERIC_WRITE,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
 					NULL,
 					CREATE_ALWAYS,
 					FILE_ATTRIBUTE_NORMAL,
 					NULL);
 	if (hOutKeyFile == INVALID_HANDLE_VALUE) return false;
-	DWORD written = 0;
 	if(WriteFile(
 					hOutKeyFile,
 					pbKeyBlobInternal,
 					dwBlobLen,
-					&written,
+					NULL,
 					NULL))
 	{
 		OutputDebugStringA("Contents have been written to the file. \n");
@@ -217,14 +213,13 @@ bool myCryptoClass::ExportExchangeKey(wstring filename)
 		return false;
 	}
 	CloseHandle(hOutKeyFile);
-	delete(pbKeyBlobInternal);
 	return true;
 }
 bool myCryptoClass::LoadExchangeKey(wstring filename)
 {
 	DWORD dwBlobLen;
 	CreateExchangeKey();
-	//Определение размера BLOBа открытого ключа и распределение памяти
+	//ГЋГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ Г°Г Г§Г¬ГҐГ°Г  BLOBГ  Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г  ГЁ Г°Г Г±ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ ГЇГ Г¬ГїГІГЁ
 	if(CryptExportKey(
 					ExchKey,
 					0,
@@ -269,7 +264,7 @@ bool myCryptoClass::LoadExchangeKey(wstring filename)
 		OutputDebugStringA("Error reading to the file. \n");
 		return false;
 	}
-	// Получение ключа согласования импортом открытого ключа
+	// ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЄГ«ГѕГ·Г  Г±Г®ГЈГ«Г Г±Г®ГўГ Г­ГЁГї ГЁГ¬ГЇГ®Г°ГІГ®Г¬ Г®ГІГЄГ°Г»ГІГ®ГЈГ® ГЄГ«ГѕГ·Г 
 	if(CryptImportKey(
 					hProv,
 					pbKeyBlobExternal,
@@ -300,28 +295,28 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath, bool usingI
 	{
 		HCRYPTHASH hash;
 		this->EnSessionKey = 0;
-		//создадим новый дескриптор хэш-объекта по алгоритму ГОСТ 34.11-94
+		//Г±Г®Г§Г¤Г Г¤ГЁГ¬ Г­Г®ГўГ»Г© Г¤ГҐГ±ГЄГ°ГЁГЇГІГ®Г° ГµГЅГё-Г®ГЎГєГҐГЄГІГ  ГЇГ® Г Г«ГЈГ®Г°ГЁГІГ¬Гі ГѓГЋГ‘Г’ 34.11-94
 		result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
-		//хэширование парольной фразы
+		//ГµГЅГёГЁГ°Г®ГўГ Г­ГЁГҐ ГЇГ Г°Г®Г«ГјГ­Г®Г© ГґГ°Г Г§Г»
 		result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0);
-		//сессионный ключ с возможностью его экспорта
+		//Г±ГҐГ±Г±ГЁГ®Г­Г­Г»Г© ГЄГ«ГѕГ· Г± ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГјГѕ ГҐГЈГ® ГЅГЄГ±ГЇГ®Г°ГІГ 
 		result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &EnSessionKey);
 		CryptDestroyHash(hash);
 	}
 
 	DWORD IVsize = 0;
 	CryptGetKeyParam(EnSessionKey, KP_IV, 0, &IVsize, 0);
-	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
+	//ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГ®Г­Г­Г»Г© ГўГҐГЄГІГ®Г° (Г­Г Г·Г Г«ГјГ­Г»Г© ГўГҐГЄГІГ®Г°) ГёГЁГґГ°Г®ГўГ Г­ГЁГї ГЇГ® ГѓГЋГ‘Г’ 28147-89 Гў Г±ГҐГ±Г±ГЁГ®Г­Г­Г®Г¬ ГЄГ«ГѕГ·ГҐ SessionKey
 	BYTE* IV = new BYTE(IVsize);
-	//получение адреса и длины инит вектора
+	//ГЇГ®Г«ГіГ·ГҐГ­ГЁГҐ Г Г¤Г°ГҐГ±Г  ГЁ Г¤Г«ГЁГ­Г» ГЁГ­ГЁГІ ГўГҐГЄГІГ®Г°Г 
 	CryptGetKeyParam(EnSessionKey, KP_IV, IV , &IVsize, 0);
-	//заполнение буфера рендомом
+	//Г§Г ГЇГ®Г«Г­ГҐГ­ГЁГҐ ГЎГіГґГҐГ°Г  Г°ГҐГ­Г¤Г®Г¬Г®Г¬
 	CryptGenRandom(hProv, IVsize, IV );
 
-	//Укажем, что новый буфер со случайными данными будет использоваться в качестве инициализационного вектора шифрования:
+	//Г“ГЄГ Г¦ГҐГ¬, Г·ГІГ® Г­Г®ГўГ»Г© ГЎГіГґГҐГ° Г±Г® Г±Г«ГіГ·Г Г©Г­Г»Г¬ГЁ Г¤Г Г­Г­Г»Г¬ГЁ ГЎГіГ¤ГҐГІ ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГјГ±Гї Гў ГЄГ Г·ГҐГ±ГІГўГҐ ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГ®Г­Г­Г®ГЈГ® ГўГҐГЄГІГ®Г°Г  ГёГЁГґГ°Г®ГўГ Г­ГЁГї:
 	result &= CryptSetKeyParam(EnSessionKey, KP_IV, IV , 0);
 
-	//откроем файлы
+	//Г®ГІГЄГ°Г®ГҐГ¬ ГґГ Г©Г«Г»
 	HANDLE hSource = CreateFileW(
 					filepath.c_str(),
 					GENERIC_READ,
@@ -352,7 +347,7 @@ bool myCryptoClass::Encrypt_File(wstring password, wstring filepath, bool usingI
 	vector<BYTE> content;
 	content.reserve(BLOCK_LENGTH);
 
-	result &= WriteFile(         // записываем IV
+	result &= WriteFile(         // Г§Г ГЇГЁГ±Г»ГўГ ГҐГ¬ IV
 					hDestination,
 					IV,
 					IVsize,
@@ -447,7 +442,7 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath, bool usingI
 		HCRYPTHASH hash;
 		this->DeSessionKey = 0;
 		result &= CryptCreateHash(hProv, CALG_GR3411, 0, 0, &hash);
-		result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0); //хэширование парольной фразы
+		result &= CryptHashData(hash, (const BYTE*)password.c_str(), password.size()*2, 0); //ГµГЅГёГЁГ°Г®ГўГ Г­ГЁГҐ ГЇГ Г°Г®Г«ГјГ­Г®Г© ГґГ°Г Г§Г»
 		result &= CryptDeriveKey(hProv, CALG_G28147, hash, CRYPT_EXPORTABLE, &DeSessionKey);
 		CryptDestroyHash(hash);
 	}
@@ -455,9 +450,9 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath, bool usingI
 
 	DWORD IVsize = 0;
 	CryptGetKeyParam(DeSessionKey, KP_IV, 0, &IVsize, 0);
-	//инициализационный вектор (начальный вектор) шифрования по ГОСТ 28147-89 в сессионном ключе SessionKey
+	//ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГ®Г­Г­Г»Г© ГўГҐГЄГІГ®Г° (Г­Г Г·Г Г«ГјГ­Г»Г© ГўГҐГЄГІГ®Г°) ГёГЁГґГ°Г®ГўГ Г­ГЁГї ГЇГ® ГѓГЋГ‘Г’ 28147-89 Гў Г±ГҐГ±Г±ГЁГ®Г­Г­Г®Г¬ ГЄГ«ГѕГ·ГҐ SessionKey
 	BYTE* IV = new BYTE(IVsize);
-	//получение IV из файла
+	//ГЇГ®Г«ГіГ·ГҐГ­ГЁГҐ IV ГЁГ§ ГґГ Г©Г«Г 
 	DWORD nRead = 0;
 	result &= ReadFile(
 					hSource,
@@ -465,7 +460,7 @@ bool myCryptoClass::Decrypt_File(wstring password, wstring filepath, bool usingI
 					IVsize,
 					&nRead,
 					NULL);
-	//Укажем, что новый IV будет использоваться в качестве инициализационного вектора шифрования:
+	//Г“ГЄГ Г¦ГҐГ¬, Г·ГІГ® Г­Г®ГўГ»Г© IV ГЎГіГ¤ГҐГІ ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГјГ±Гї Гў ГЄГ Г·ГҐГ±ГІГўГҐ ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГ®Г­Г­Г®ГЈГ® ГўГҐГЄГІГ®Г°Г  ГёГЁГґГ°Г®ГўГ Г­ГЁГї:
 	result &= CryptSetKeyParam(DeSessionKey, KP_IV, IV , 0);
 
 	LARGE_INTEGER offset;
@@ -574,7 +569,7 @@ bool myCryptoClass::ExportSessionKey(wstring filename)
 
 bool myCryptoClass::LoadSessionKey(wstring filename)
 {
-	// Определение размера BLOBа сессионного ключа и распределение памяти.
+	// ГЋГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ Г°Г Г§Г¬ГҐГ°Г  BLOBГ  Г±ГҐГ±Г±ГЁГ®Г­Г­Г®ГЈГ® ГЄГ«ГѕГ·Г  ГЁ Г°Г Г±ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ ГЇГ Г¬ГїГІГЁ.
 	DWORD dwBlobLenSimple = 0;
 	HANDLE hInKeyFile = CreateFileW(
 					filename.c_str(),
@@ -607,8 +602,8 @@ bool myCryptoClass::LoadSessionKey(wstring filename)
 		return false;
 	}
 
-    // Получение сессионного ключа импортом зашифрованного сессионного ключа
-	// на ключе Agree.
+    // ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ Г±ГҐГ±Г±ГЁГ®Г­Г­Г®ГЈГ® ГЄГ«ГѕГ·Г  ГЁГ¬ГЇГ®Г°ГІГ®Г¬ Г§Г ГёГЁГґГ°Г®ГўГ Г­Г­Г®ГЈГ® Г±ГҐГ±Г±ГЁГ®Г­Г­Г®ГЈГ® ГЄГ«ГѕГ·Г 
+	// Г­Г  ГЄГ«ГѕГ·ГҐ Agree.
 	if(CryptImportKey(
 					hProv,
 					blobbuffer,
@@ -668,14 +663,14 @@ bool myCryptoClass::LoadSessionKey(wstring filename)
 
 
 
-//Для работы с контейнером должна быть создана функция получения имени текущего пользователя
-wstring __fastcall myCryptoClass::GetmyUserName()
+//Г„Г«Гї Г°Г ГЎГ®ГІГ» Г± ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г®Г¬ Г¤Г®Г«Г¦Г­Г  ГЎГ»ГІГј Г±Г®Г§Г¤Г Г­Г  ГґГіГ­ГЄГ¶ГЁГї ГЇГ®Г«ГіГ·ГҐГ­ГЁГї ГЁГ¬ГҐГ­ГЁ ГІГҐГЄГіГ№ГҐГЈГ® ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гї
+string __fastcall myCryptoClass::GetUserName()
 {
-  wstringstream result;
-  WCHAR Buffer[ MAX_PATH + 1 ];
+  stringstream result;
+  char Buffer[ MAX_PATH + 1 ];
   DWORD sz = 0;
   sz = MAX_PATH - 1;
-  if ( GetUserNameW( Buffer, &sz ) )
+  if ( GetUserNameA( Buffer, &sz ) )
   {
 	result << Buffer;
   }

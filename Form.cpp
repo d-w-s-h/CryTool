@@ -21,8 +21,9 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	: TForm(Owner)
 {
 
-	CSP = new myCryptoClass( PROV_GOST_2001_DH);
-	MainForm->UsernameEdit->Text = (UnicodeString) CSP->GetUserName().c_str();
+//	CSP = new myCryptoClass( PROV_GOST_2001_DH);
+	CSP = new netClass(PROV_GOST_2001_DH);
+	MainForm->UsernameEdit->Text = (UnicodeString) CSP->GetmyUserName().c_str();
 	bool CreateContainer();
 	EncryptFileButton->Enabled =false;
 	DecryptFileButton->Enabled =false;
@@ -34,6 +35,25 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 
 	this->usingImportKey=false;
 	this->isPublicKeyLoaded=false;
+
+	DownloadProgressBar->Visible=false;
+
+    if(CSP->LoadContainer(MainForm->UsernameEdit->Text.c_str()))
+	{
+		EncryptFileButton->Enabled =true;
+		DecryptFileButton->Enabled =true;
+		ExportKeyButton->Enabled =true;
+		GenerateKeyButton->Enabled =true;
+		LoadKeyButton->Enabled  =true;
+		SessionLoadBtn->Enabled = true;
+		InfoLabel->Caption = "Контейнер был успешно загружен";
+	}
+	else
+	{
+		InfoLabel->Caption = "Ошибка загрузки конейнера (либо контейнер был загружен ранее)";
+	}
+
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
@@ -47,7 +67,7 @@ void __fastcall TMainForm::CreateContainerButtonClick(TObject *Sender)
 		LoadKeyButton->Enabled  =true;
 		SessionLoadBtn->Enabled = true;
 		stringstream msg;
-		msg << "Контейнер " << CSP->GetUserName().c_str() <<  " создан";
+		msg << "Контейнер " << CSP->GetmyUserName().c_str() <<  " создан";
 
 		InfoLabel->Caption = msg.str().c_str();
 	}
@@ -262,7 +282,7 @@ void __fastcall TMainForm::SendButtonClick(TObject *Sender)
 		Application->MessageBoxW(L"Нет активных соединений",L"Ошибка", MB_OK | MB_ICONWARNING);
 	}
 
-//		ServerSocket->Socket->Connections[0]->SendText("#end");
+
 
 
 
@@ -288,6 +308,9 @@ void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWin
 	   return;
 	}
 	OutputDebugStringA("Client is connected to this server");
+	CSP->NetExportPublickKey(ServerSocket->Socket->Connections[0]);
+
+
 }
 //---------------------------------------------------------------------------
 
@@ -340,26 +363,35 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 		if(SaveExKeyDialog->Execute())
 		{
 			File = new TFileStream( SaveExKeyDialog->FileName, fmCreate | fmOpenReadWrite );//
-			delete(buffer);
+
 		}
 		ClientSocket->Socket->SendText( "OKfromclient#" );
-		return;
+		DownloadProgressBar->Visible=true;
+		DownloadProgressBar->Max=FileSize;
+
 
 	}
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromSERVER" )
 	{
 		ClientSocket->Socket->SendStream(File);
 	}
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )
+	{
+//		ServerSocket->Socket->Connections[0]->SendStream(File);
+		CSP->NetImportPublickKey(ClientSocket->Socket, buffer, nBytesRead);
+	}
 	else
 	{
 		File->Write(buffer,nBytesRead);
-		if(File->Size >=FileSize)
+		DownloadProgressBar->Position= File->Size ;
+		if(File->Size >= FileSize)
 		{
 			File->Free();
+			DownloadProgressBar->Visible=false;
 		}
 	}
 
-
+	delete(buffer);
 
 
 }
@@ -395,24 +427,29 @@ void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSoc
 		if(SaveExKeyDialog->Execute())
 		{
 			File = new TFileStream( SaveExKeyDialog->FileName, fmCreate | fmOpenReadWrite );//
-			delete(buffer);
 		}
 		ServerSocket->Socket->Connections[0]->SendText( "OKfromSERVER#" );
-		return;
+
+		DownloadProgressBar->Visible=true;
+		DownloadProgressBar->Max=FileSize;
 
 	}
 	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromclient" )
 	{
 		ServerSocket->Socket->Connections[0]->SendStream(File);
 	}
-    else
+
+	else
 	{
 		File->Write(buffer,nBytesRead);
+		DownloadProgressBar->Position= File->Size ;
 		if(File->Size >=FileSize)
 		{
 			File->Free();
+			DownloadProgressBar->Visible=false;
 		}
 	}
+	delete(buffer);
 
 }
 //---------------------------------------------------------------------------

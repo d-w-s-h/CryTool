@@ -25,6 +25,7 @@
 #include "processingThread.h"
 
 #include "myCryptoClass.h"
+#include "netClass.h"
 //---------------------------------------------------------------------------
 class TMainForm : public TForm
 {
@@ -54,6 +55,7 @@ __published:	// IDE-managed Components
 	TButton *SendButton;
 	TClientSocket *ClientSocket;
 	TServerSocket *ServerSocket;
+	TProgressBar *DownloadProgressBar;
 	void __fastcall CreateContainerButtonClick(TObject *Sender);
 	void __fastcall LoadContainerButtonClick(TObject *Sender);
 	void __fastcall DeleteContainerButtonClick(TObject *Sender);
@@ -75,11 +77,13 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);
-	myCryptoClass *CSP;
+//	myCryptoClass *CSP;
+	netClass *CSP;
     bool usingImportKey;
 	bool isPublicKeyLoaded;
 	TFileStream * File;
 	__int64 FileSize;
+
 
 
 };

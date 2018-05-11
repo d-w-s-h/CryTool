@@ -209,6 +209,13 @@ object MainForm: TMainForm
     TabOrder = 17
     OnClick = SendButtonClick
   end
+  object DownloadProgressBar: TProgressBar
+    Left = 544
+    Top = 164
+    Width = 150
+    Height = 17
+    TabOrder = 18
+  end
   object OpenFileDialog: TOpenDialog
     Left = 320
     Top = 200
@@ -224,8 +231,8 @@ object MainForm: TMainForm
     OnConnect = ClientSocketConnect
     OnDisconnect = ClientSocketDisconnect
     OnRead = ClientSocketRead
-    Left = 608
-    Top = 168
+    Left = 712
+    Top = 136
   end
   object ServerSocket: TServerSocket
     Active = True
@@ -233,7 +240,7 @@ object MainForm: TMainForm
     ServerType = stNonBlocking
     OnClientConnect = ServerSocketClientConnect
     OnClientRead = ServerSocketClientRead
-    Left = 544
-    Top = 168
+    Left = 712
+    Top = 80
   end
 end

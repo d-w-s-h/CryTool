@@ -41,7 +41,7 @@ class myCryptoClass
 	public:
 		myCryptoClass(DWORD prov);
 		void CleanUp();
-		string __fastcall GetUserName();
+		wstring __fastcall GetmyUserName();
 		string __fastcall ErrorIdToStr( __int64 err_type );
 		string __fastcall AlgIDToStr( DWORD alg_type );
 		bool CreateContainer(wstring userName);
