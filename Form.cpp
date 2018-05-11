@@ -373,7 +373,8 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 	}
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromSERVER" )
 	{
-		ClientSocket->Socket->SendStream(File);
+		//ClientSocket->Socket->SendStream(File);
+		CSP->NetSendEncryptFile(ClientSocket->Socket, File);
 	}
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )
 	{
@@ -391,15 +392,23 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 			InfoLabel->Caption = "Установлено защищенное соединение.";
 			ClientSocket->Socket->SendText("CLIENTSESSIONUP#");
         }
-    }
+	}
+//	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "DownloadSuccess" )
+//	{
+//		InfoLabel->Caption = "Передача файла завершена";
+//		CSP->ClearupAfterDownload(File);
+//	}
 	else
 	{
 		File->Write(buffer,nBytesRead);
 		DownloadProgressBar->Position= File->Size ;
 		if(File->Size >= FileSize)
 		{
-			File->Free();
+			CSP->NetRecieveEncryptFile(ClientSocket->Socket, File);
+//			File->Free();
 			DownloadProgressBar->Visible=false;
+			DownloadProgressBar->Position=0;
+//			ServerSocket->Socket->Connections[0]->SendText( "DownloadSuccess#" );
 		}
 	}
 
@@ -449,7 +458,8 @@ void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSoc
 
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromclient" )
 	{
-		ServerSocket->Socket->Connections[0]->SendStream(File);
+		//ServerSocket->Socket->Connections[0]->SendStream(File);
+		CSP->NetSendEncryptFile(ServerSocket->Socket->Connections[0], File);
 	}
 
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )
@@ -463,17 +473,24 @@ void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSoc
 
 	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "CLIENTSESSIONUP" )
 	{
-        InfoLabel->Caption = "Установлено защищенное соединение";
+		InfoLabel->Caption = "Установлено защищенное соединение";
 	}
-
+//	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "DownloadSuccess" )
+//	{
+//		InfoLabel->Caption = "Передача файла завершена";
+//		CSP->ClearupAfterDownload(File);
+//	}
 	else
 	{
 		File->Write(buffer,nBytesRead);
 		DownloadProgressBar->Position= File->Size ;
 		if(File->Size >=FileSize)
 		{
-			File->Free();
 			DownloadProgressBar->Visible=false;
+			CSP->NetRecieveEncryptFile(ServerSocket->Socket->Connections[0], File);
+//			File->Free();
+//			ServerSocket->Socket->Connections[0]->SendText( "DownloadSuccess#" );
+
 		}
 	}
 	delete(buffer);

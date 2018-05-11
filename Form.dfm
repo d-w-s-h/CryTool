@@ -35,7 +35,7 @@ object MainForm: TMainForm
     Width = 3
     Height = 13
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clMenuHighlight
+    Font.Color = clFuchsia
     Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []

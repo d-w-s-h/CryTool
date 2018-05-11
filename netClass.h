@@ -18,14 +18,22 @@ class netClass : public myCryptoClass
 		using myCryptoClass::pbKeyBlobExternal;
 
 		wstring ansi2unicode(const std::string &str);
+		bool AutoGenerateSessionKey();
 	public:
 		netClass(DWORD prov);
-		bool AutoGenerateSessionKey();
+
 		bool NetExportPublicKey(TCustomWinSocket * connection);
 		bool NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead);
 
 		bool NetExportSessionKey(TCustomWinSocket * connection);
 		bool NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead);
+
+		bool NetSendEncryptFile(TCustomWinSocket * connection, TFileStream * file);
+		bool NetRecieveEncryptFile(TCustomWinSocket * connection, TFileStream * file);
+
+//		bool ClearupAfterDownload(TFileStream * file);
+
+
 
 
 

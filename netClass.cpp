@@ -173,6 +173,47 @@ bool netClass::NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, 
 	}
 }
 
+bool netClass::NetSendEncryptFile(TCustomWinSocket * connection, TFileStream * file)
+{
+
+	if(!this->Encrypt_File(L"", file->FileName.c_str(), true))
+	{
+		return false;
+	}
+	wstringstream EncryptFileName;
+	EncryptFileName << file->FileName.c_str() <<".encrypted";
+	file->Free();
+	file = new TFileStream(EncryptFileName.str().c_str(),  fmOpenRead);
+	connection->SendStream(file);
+//	file->Free();
+//	DeleteFile( EncryptFileName.str().c_str());
+
+}
+bool netClass::NetRecieveEncryptFile(TCustomWinSocket * connection, TFileStream * file)
+{
+
+	wstring recievedfilename = file->FileName.c_str();
+	file->Free();
+	if(!this->Decrypt_File(L"", recievedfilename.c_str(), true))
+	{
+		return false;
+	}
+
+	DeleteFile(recievedfilename.c_str());
+
+	wstringstream oldname;
+	oldname << recievedfilename.c_str() << ".decrypted";
+
+	_wrename(oldname.str().c_str(),recievedfilename.c_str());
+}
+
+
+//bool netClass::ClearupAfterDownload(TFileStream * file)
+//{
+//	wstring filename = file->FileName.c_str();
+//	file->Free();
+//	DeleteFile(filename.c_str());
+//}
 
 std::wstring netClass::ansi2unicode(const std::string &str)
 {
