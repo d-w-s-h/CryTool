@@ -74,6 +74,8 @@ __published:	// IDE-managed Components
 	void __fastcall UsingImportKeyCheckClick(TObject *Sender);
 	void __fastcall DisconnectButtonClick(TObject *Sender);
 	void __fastcall ServerSocketClientDisconnect(TObject *Sender, TCustomWinSocket *Socket);
+	void __fastcall ClientSocketError(TObject *Sender, TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
+          int &ErrorCode);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

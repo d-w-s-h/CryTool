@@ -59,6 +59,7 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::UpdateContainerButtonClick(TObject *Sender)
 {
+	CSP->CleanUp();
 	if(CSP->DeleteContainer(MainForm->UsernameEdit->Text.c_str()))
 	{
 		InfoLabel->Caption = "Контейнер был успешно удален";
@@ -70,8 +71,8 @@ void __fastcall TMainForm::UpdateContainerButtonClick(TObject *Sender)
 	}
 	if(CSP->CreateContainer(MainForm->UsernameEdit->Text.c_str()))
 	{
-		stringstream msg;
-		msg << "Контейнер " << CSP->GetmyUserName().c_str() <<  " создан";
+		wstringstream msg;
+		msg << L"Контейнер " << CSP->GetmyUserName().c_str() <<  L" создан";
 		InfoLabel->Caption = msg.str().c_str();
 	}
 	else
@@ -87,6 +88,17 @@ void __fastcall TMainForm::UpdateContainerButtonClick(TObject *Sender)
 	{
 		InfoLabel->Caption = "Ошибка генерации ключей (либо ключи уже был сгенерированы ранее)";
 	}
+	if(ClientSocket->Socket->Connected)
+	{
+		ClientSocket->Socket->Close();
+	}
+	else if(ServerSocket->Socket->ActiveConnections != 0)
+	{
+		ServerSocket->Socket->Connections[0]->Close();
+	}
+
+
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::UsingImportKeyCheckClick(TObject *Sender)
@@ -527,4 +539,13 @@ void __fastcall TMainForm::DisconnectButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TMainForm::ClientSocketError(TObject *Sender, TCustomWinSocket *Socket, TErrorEvent ErrorEvent,
+          int &ErrorCode)
+{
+	Application->MessageBoxW(L"Заданный клиент недоступен.",L"Ошибка", MB_OK | MB_ICONWARNING);
+	ClientSocket->Socket->Close();
+	ErrorCode =0;
+}
+//---------------------------------------------------------------------------
 

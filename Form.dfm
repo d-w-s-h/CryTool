@@ -19,7 +19,7 @@ object MainForm: TMainForm
   object InfoLabel: TLabel
     Left = 8
     Top = 345
-    Width = 173
+    Width = 3
     Height = 13
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clFuchsia
@@ -51,15 +51,14 @@ object MainForm: TMainForm
     Top = 79
     Width = 265
     Height = 260
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     MultiLine = True
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #1056#1072#1073#1086#1090#1072' '#1089' '#1092#1072#1081#1083#1072#1084#1080
-      ExplicitWidth = 279
       object EncryptFileButton: TButton
         Left = 3
-        Top = -1
+        Top = 7
         Width = 121
         Height = 71
         Caption = #1064#1080#1092#1088#1086#1074#1072#1090#1100
@@ -68,7 +67,7 @@ object MainForm: TMainForm
       end
       object EnPasswordEdit: TEdit
         Left = 3
-        Top = 77
+        Top = 85
         Width = 121
         Height = 21
         PasswordChar = '*'
@@ -77,7 +76,7 @@ object MainForm: TMainForm
       end
       object PassConfirmEdit: TEdit
         Left = 3
-        Top = 103
+        Top = 111
         Width = 121
         Height = 21
         PasswordChar = '*'
@@ -86,7 +85,7 @@ object MainForm: TMainForm
       end
       object SessionExBtn: TButton
         Left = 3
-        Top = 130
+        Top = 138
         Width = 121
         Height = 42
         Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
@@ -97,7 +96,7 @@ object MainForm: TMainForm
       end
       object SessionLoadBtn: TButton
         Left = 130
-        Top = 130
+        Top = 138
         Width = 119
         Height = 42
         Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1089#1077#1089#1089#1080#1086#1085#1085#1099#1081' '#1082#1083#1102#1095
@@ -107,7 +106,7 @@ object MainForm: TMainForm
       end
       object UsingImportKeyCheck: TCheckBox
         Left = 130
-        Top = 103
+        Top = 111
         Width = 121
         Height = 21
         Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1082#1083#1102#1095
@@ -117,7 +116,7 @@ object MainForm: TMainForm
       end
       object DePasswordEdit: TEdit
         Left = 130
-        Top = 76
+        Top = 84
         Width = 119
         Height = 21
         PasswordChar = '*'
@@ -126,7 +125,7 @@ object MainForm: TMainForm
       end
       object DecryptFileButton: TButton
         Left = 130
-        Top = -1
+        Top = 7
         Width = 121
         Height = 71
         Caption = #1056#1072#1089#1096#1080#1092#1088#1086#1074#1072#1090#1100
@@ -135,7 +134,7 @@ object MainForm: TMainForm
       end
       object ExportKeyButton: TButton
         Left = 3
-        Top = 178
+        Top = 186
         Width = 121
         Height = 36
         Caption = #1069#1082#1089#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
@@ -145,7 +144,7 @@ object MainForm: TMainForm
       end
       object LoadKeyButton: TButton
         Left = 130
-        Top = 178
+        Top = 186
         Width = 119
         Height = 36
         Caption = #1048#1084#1087#1086#1088#1090#1080#1088#1086#1074#1072#1090#1100' '#1086#1090#1082#1088#1099#1090#1099#1081' '#1082#1083#1102#1095
@@ -157,7 +156,6 @@ object MainForm: TMainForm
     object TabSheet2: TTabSheet
       Caption = #1059#1076#1072#1083#1077#1085#1085#1086#1077' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077
       ImageIndex = 1
-      ExplicitWidth = 279
       object ConnectButton: TButton
         Left = 3
         Top = 32
@@ -217,6 +215,7 @@ object MainForm: TMainForm
     OnConnect = ClientSocketConnect
     OnDisconnect = ClientSocketDisconnect
     OnRead = ClientSocketRead
+    OnError = ClientSocketError
     Left = 24
     Top = 296
   end

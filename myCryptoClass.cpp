@@ -953,4 +953,7 @@ void myCryptoClass::CleanUp()
 	CryptReleaseContext(this->hProv, 0);
 	delete(this->pbKeyBlobInternal) ;
 	delete(this->pbKeyBlobExternal) ;
+	CryptDestroyKey(ExchKey);
+	CryptDestroyKey(EnSessionKey);
+	CryptDestroyKey(DeSessionKey);
 }

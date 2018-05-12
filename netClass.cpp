@@ -84,6 +84,7 @@ bool netClass::NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, i
 		return false;
 	}
 
+
 }
 bool netClass::AutoGenerateSessionKey()
 {
