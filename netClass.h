@@ -6,7 +6,7 @@
 #include <System.Win.ScktComp.hpp>
 
 //---------------------------------------------------------------------------
-class netClass : public myCryptoClass
+class netClass : public myCryptoClass       //класс добавляет функции взаимодействия по сети, работы с сокетами
 {
 	protected:
 		using myCryptoClass::hProv;

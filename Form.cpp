@@ -260,7 +260,8 @@ void __fastcall TMainForm::SessionLoadBtnClick(TObject *Sender)
 
 void __fastcall TMainForm::SendButtonClick(TObject *Sender)
 {
-//	TFileStream *File;
+//	кнопка отправить файл, по ее нажатию в зависимости от того роль клиента или сервера выполняет приложение
+//  передается запрос на передачу файла, содержащий строку file#, его имя и размер
 
 
 
@@ -302,6 +303,8 @@ void __fastcall TMainForm::ConnectButtonClick(TObject *Sender)
 
 void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWinSocket *Socket)
 {
+   //вызывается на сервере когда приходит запрос на подключение
+   //если ОК, начинается процесс обмена ключами
 	wstringstream msg;
 
 	msg << L"Клиент " << (ServerSocket->Socket->Connections[0]->RemoteAddress).c_str() << L" запрашивает подключение";
@@ -312,7 +315,7 @@ void __fastcall TMainForm::ServerSocketClientConnect(TObject *Sender, TCustomWin
 	   return;
 	}
 	OutputDebugStringA("Client is connected to this server");
-	CSP->NetExportPublicKey(ServerSocket->Socket->Connections[0]);
+	CSP->NetExportPublicKey(ServerSocket->Socket->Connections[0]);   //начинаем обмен ключей с отправки открытого ключа сервера
 	ConnectButton->Enabled = false;
 	DisconnectButton->Enabled = true;
 
@@ -349,7 +352,9 @@ void __fastcall TMainForm::ClientSocketConnect(TObject *Sender, TCustomWinSocket
 
 void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *Socket)
 {
+	// функция принятия пакета клиентом с любыми данными, здесь обрабатывается что именно пришло
 
+	// принимаем в буфер
 	BYTE *buffer;
 	int nBytesRead =0;
 	nBytesRead = ClientSocket->Socket->ReceiveLength();
@@ -359,8 +364,9 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 
 
 
-	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "file" )
-	{
+	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "file" )   // если это запрос на передачу файла
+	{                                                     // парсим имя и размер, создаем нужный поток для принимаемого файла
+														  // отправляем ответ ОК или CANCEL серверу
 		Rtext.Delete( 1 , Rtext.Pos( "#" ) ) ;
 		AnsiString Name = Rtext.SubString( 0 , Rtext.Pos( "#" ) -1 );
 		AnsiString FileName = Name.SubString( Name.LastDelimiter( "\\" ) + 1 , Name.Length() );
@@ -388,13 +394,13 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 
 
 	}
-	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromSERVER" )
-	{
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "OKfromSERVER" ) // если от сервера пришел положительный ответ на запрос
+	{                                                                // на передачу файла, начинаем шифровать и передавать файл
 		//ClientSocket->Socket->SendStream(File);
 		CSP->NetSendEncryptFile(ClientSocket->Socket, File);
 	}
-	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )
-	{
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "PUBLICKEY" )  // если принимаем открытый ключ от сервера, импортируем его и
+	{                                                              // передаем в ответ свой открытый ключ
 		if(CSP->NetImportPublicKey(ClientSocket->Socket, buffer, nBytesRead))
 		{
 			InfoLabel->Caption = "Публичный ключ сервера импортирован...";
@@ -402,21 +408,25 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 		}
 
 	}
-	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "SESSIONKEY" )
-	{
+	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "SESSIONKEY" )  // если принимаем сессионный ключ, импортируем его
+	{                                                               // уведомляем сервер о получении общего сессионного ключа и
+                                                                    // о возможности защищенного обмена файлами
 		if(CSP->NetImportSessionKey(ClientSocket->Socket, buffer, nBytesRead))
 		{
 			InfoLabel->Caption = "Установлено защищенное соединение.";
 			ClientSocket->Socket->SendText("CLIENTSESSIONUP#");
         }
 	}
-//	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "DownloadSuccess" )
+//	else if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "DownloadSuccess" ) //подтверждение получения, убрано
 //	{
 //		InfoLabel->Caption = "Передача файла завершена";
 //		CSP->ClearupAfterDownload(File);
 //	}
-	else
-	{
+	else                                                             // если не присутствуют сигнатуры в пакете, значит это блок данных
+	{                                                                // шифрованного файла, которые нужно принимать в открытый
+																	 // на этапе запроса файловый поток
+																	 // если размер файла достигает размера переданного в запросе
+																	 // начинается процесс расшифровывания
 		File->Write(buffer,nBytesRead);
 		DownloadProgressBar->Position= File->Size ;
 		if(File->Size >= FileSize)
@@ -438,12 +448,21 @@ void __fastcall TMainForm::ClientSocketRead(TObject *Sender, TCustomWinSocket *S
 
 void __fastcall TMainForm::ServerSocketClientRead(TObject *Sender, TCustomWinSocket *Socket)
 {
+	// функция принятия пакета сервером с любыми данными, здесь обрабатывается что именно пришло
+	// принцип аналогичен функции для клиента
+	// за исключением передачи шифрованного сессионного ключа после получения открытого ключа клиента
+    // и обработки сообщения от клиента об успешном импорте сессионного ключа
+
+
+	// принимаем в буфер
 	BYTE *buffer;
 	int nBytesRead =0;
 	nBytesRead = ServerSocket->Socket->Connections[0]->ReceiveLength();
 	buffer = new BYTE[nBytesRead] ;
 	ServerSocket->Socket->Connections[0]->ReceiveBuf(buffer, nBytesRead );
 	AnsiString Rtext = (char*)buffer;
+
+
 	if(Rtext.SubString( 0,Rtext.Pos("#")-1) == "file" )
 	{
 		Rtext.Delete( 1 , Rtext.Pos( "#" ) ) ;

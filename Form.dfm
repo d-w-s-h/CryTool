@@ -217,7 +217,7 @@ object MainForm: TMainForm
     OnRead = ClientSocketRead
     OnError = ClientSocketError
     Left = 24
-    Top = 296
+    Top = 320
   end
   object ServerSocket: TServerSocket
     Active = True
@@ -226,7 +226,7 @@ object MainForm: TMainForm
     OnClientConnect = ServerSocketClientConnect
     OnClientDisconnect = ServerSocketClientDisconnect
     OnClientRead = ServerSocketClientRead
-    Left = 128
-    Top = 280
+    Left = 88
+    Top = 320
   end
 end

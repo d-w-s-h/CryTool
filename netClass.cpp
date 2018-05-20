@@ -12,7 +12,7 @@ netClass::netClass(DWORD prov) : myCryptoClass(prov)
 {
 
 }
-bool netClass::NetExportPublicKey(TCustomWinSocket * connection)
+bool netClass::NetExportPublicKey(TCustomWinSocket * connection)   //экспортируем ключ в TEMP, отправляем с сигнатурой, затираем файл
 {
 	wstringstream keyname;
 	if (CreateDirectory(L"TEMP", NULL) ||
@@ -31,7 +31,7 @@ bool netClass::NetExportPublicKey(TCustomWinSocket * connection)
 		KEY->ReadBuffer(buffer,KEY->Size);
 		ms->WriteBuffer(buffer, KEY->Size);
 		ms->Position=0;
-		connection->SendStream(ms);
+		connection->SendStream(ms);       //сокет принимается функцией и может быть как серверным так и клиентским
 
 		delete(buffer);
 		ms->Clear();
@@ -48,7 +48,7 @@ bool netClass::NetExportPublicKey(TCustomWinSocket * connection)
 
 }
 
-bool netClass::NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead)
+bool netClass::NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead)  //Принимаем в TEMP, импортируем, затираем
 {
 
 	if (CreateDirectory(L"TEMP", NULL) ||
@@ -86,7 +86,7 @@ bool netClass::NetImportPublicKey(TCustomWinSocket * connection, BYTE *buffer, i
 
 
 }
-bool netClass::AutoGenerateSessionKey()
+bool netClass::AutoGenerateSessionKey() //Генерация ключа должна происходить автоматически на стороне сервера
 {
 	if(!CryptGenKey(this->hProv,
 					CALG_G28147,
@@ -98,8 +98,8 @@ bool netClass::AutoGenerateSessionKey()
 	this->DeSessionKey = this->EnSessionKey;
 }
 
-bool netClass::NetExportSessionKey(TCustomWinSocket * connection)
-{
+bool netClass::NetExportSessionKey(TCustomWinSocket * connection) //сервер генерит сессионый ключ, экспортирует его в зашифрованном
+{                                                                 //виде в TEMP, пересылает с SESSIONKEY#, затирает
 	wstringstream keyname;
 	if (CreateDirectory(L"TEMP", NULL) ||
 	ERROR_ALREADY_EXISTS == GetLastError())
@@ -139,7 +139,7 @@ bool netClass::NetExportSessionKey(TCustomWinSocket * connection)
 }
 
 
-bool netClass::NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead)
+bool netClass::NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, int nBytesRead) //принимает в TEMP, импортирует, затирает
 {
     if (CreateDirectory(L"TEMP", NULL) ||
 	ERROR_ALREADY_EXISTS == GetLastError())
@@ -175,7 +175,7 @@ bool netClass::NetImportSessionKey(TCustomWinSocket * connection, BYTE *buffer, 
 	}
 }
 
-bool netClass::NetSendEncryptFile(TCustomWinSocket * connection, TFileStream * file)
+bool netClass::NetSendEncryptFile(TCustomWinSocket * connection, TFileStream * file) //шифрует в .encrypted, шифрованную копию пересылает
 {
 
 	if(!this->Encrypt_File(L"", file->FileName.c_str(), true))
@@ -191,9 +191,9 @@ bool netClass::NetSendEncryptFile(TCustomWinSocket * connection, TFileStream * f
 //	DeleteFile( EncryptFileName.str().c_str());
 
 }
-bool netClass::NetRecieveEncryptFile(TCustomWinSocket * connection, TFileStream * file)
-{
-
+bool netClass::NetRecieveEncryptFile(TCustomWinSocket * connection, TFileStream * file) //принимает шифрованную копию
+{                                                                                       //(с нормальным именем, переданным ранее в запросе на передачу)
+																						//расшифровывает в .decrypted,затем затирает шифрованную копию и переименовывает расшифрованный
 	wstring recievedfilename = file->FileName.c_str();
 	file->Free();
 	if(!this->Decrypt_File(L"", recievedfilename.c_str(), true))
@@ -210,8 +210,8 @@ bool netClass::NetRecieveEncryptFile(TCustomWinSocket * connection, TFileStream 
 }
 
 
-//bool netClass::ClearupAfterDownload(TFileStream * file)
-//{
+//bool netClass::ClearupAfterDownload(TFileStream * file)  //зачистка шифрованной копии на стороне отправителя после подтверждения получения
+//{                                                        //подтверждение получения убрано
 //	wstring filename = file->FileName.c_str();
 //	file->Free();
 //	DeleteFile(filename.c_str());
